@@ -1,0 +1,66 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 后缀数组 · 乌云制作法</title><meta name="description" content="后缀数组 - shengrang"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/lucid5.jpg"><link rel="stylesheet" href="/css/apollo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" type="text/css"><meta name="generator" content="Hexo 4.2.0"></head><body><header><a class="logo-link" href="/"><img src="/mogu.gif"></a><ul class="nav nav-list"><li class="nav-list-item"><a class="nav-list-link" href="/" target="_self">BLOG</a></li><li class="nav-list-item"><a class="nav-list-link" href="/archives/" target="_self">ARCHIVE</a></li><li class="nav-list-item"><a class="nav-list-link" href="/tags/" target="_self">TAGS</a></li><li class="nav-list-item"><a class="nav-list-link" href="https://github.com/ShengRang" target="_blank">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">后缀数组</h1><div class="post-time">Apr 5, 2016</div><div class="post-content"><!-- # 后缀数组 & 后缀自动机 -->
+<p>寒假学了一下字符串里的后缀数组， 以及入门了后缀自动机。 在此记录。</p>
+<p>后缀数组和后缀自动机都是处理字符串问题的有力工具.<br> <a id="more"></a></p>
+<h3 id="后缀数组"><a href="#后缀数组" class="headerlink" title="后缀数组"></a>后缀数组</h3><p>推荐看看 <a href="http://wenku.baidu.com/link?url=YPppzoY5B0lRtOLGQDdoJ-SyDx2U9KRqmBEfgSWvCTs8xbs8RCKnC7qRqFsYRXDzEQTLDgmfVXIoYAPWcvMQljrVGMJJkgEuerAVe5Rm3sm" target="_blank" rel="noopener">这篇文章</a>, 关于后缀数组也基本是从这篇文章学习。</p>
+<p><strong>用字符数组s表示字符串</strong>: s[i:j]表示字符s[i], s[i+1], … , s[j-1]组成的字符串。len(s)表示字符串长度， s[:j]即s[0:j], s[i:]即s[i:len(s)]。 <del>会Python的都知道我在说啥</del></p>
+<p><strong>子串和后缀的定义</strong>: 对于字符串s， 则s[i:j]为s的一个子串。 s[i:]为s的后缀。(s[:j]表示前缀)</p>
+<p><strong>字符串的大小关系</strong>: 对于两个字符串sa, sb. 分别从串首依次向右比较, 出现第一次 <code>sa[i]&lt;sb[i]</code> . 则<code>sa&lt;sb</code> .若 <code>sa[i]&gt;sb[i]</code> 则 <code>sa&gt;sb</code>, 若 <code>sa[i]==sb[i]</code>, 则i++, 继续比较. 若直到 <code>i==len(sa)-1</code> 或 <code>i==len(sb)-1</code> .仍无法比较出大小, 认定较短的字符串较小.</p>
+<blockquote>
+<p>后缀数组的核心思想就是在O(n logn)/O(n)的时间内对一个字符串的所有后缀进行排序. 并利用排序后的结果处理一些字符串问题.</p>
+</blockquote>
+<p><strong>排序结果的保存</strong>:  对于字符串s, 用两个数组sa, rank记录排序结果. sa[i]表示第i小的后缀为s[sa[i]:], rank[i]表示后缀s[i:]为第rank[i]小的后缀.</p>
+<hr>
+<h4 id="后缀数组的应用"><a href="#后缀数组的应用" class="headerlink" title="后缀数组的应用"></a>后缀数组的应用</h4><h5 id="最长公共前缀"><a href="#最长公共前缀" class="headerlink" title="最长公共前缀"></a>最长公共前缀</h5><p>定义height数组: height[i]表示s[sa[i]:]和s[sa[i+1]:]的最长公共前缀。即按照大小排序的后缀中, 相邻两个后缀的公共前缀.</p>
+<p>height数组可以在求出sa, rank的前提下在O(n)时间内求出。</p>
+<p>考虑<code>height[rank[i]]</code>和<code>height[rank[i+1]]</code>.</p>
+<p><code>height[rank[i]]</code>表示后缀<code>s[i:]</code> 和后缀<code>s[sa[rank[i]+1]:]</code>的最长公共前缀x1.</p>
+<p>对于后缀<code>s[i+1:]</code>, 显然<code>s[sa[rank[i]+1]+1:]</code>的最长公共前缀为x1-1. (之前两个字符串均删除首字符).</p>
+<p>故</p>
+<script type="math/tex; mode=display">
+height[rank[i+1]]  >= height[rank[i]]-1</script><p>因此按照该顺序进行计算height数组, 无须每次从头比较, 可以达到<code>O(n)</code>复杂度.</p>
+<p>代码如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buildLcp</span><span class="params">(<span class="keyword">int</span> *s, <span class="keyword">int</span> *sa, <span class="keyword">int</span> *rank, <span class="keyword">int</span> *lcp, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = len;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=n; i++)</span><br><span class="line">        rank[sa[i]] = i;</span><br><span class="line">    <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">    lcp[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> j = sa[rank[i]<span class="number">-1</span>];</span><br><span class="line">        <span class="keyword">if</span>(h&gt;<span class="number">0</span>) h--;</span><br><span class="line">        <span class="keyword">for</span>(; j+h&lt;n &amp;&amp; i+h&lt;n; h++)</span><br><span class="line">            <span class="keyword">if</span>(s[i+h] != s[j+h]) <span class="keyword">break</span>;</span><br><span class="line">        lcp[rank[i]<span class="number">-1</span>] = h;</span><br><span class="line">    &#125;</span><br><span class="line">    lcp[n] = <span class="number">105000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>求得<code>height</code>数组之后即可知道按后缀大小排序的任意两个相邻后缀的lcp. 对于任意两个后缀<code>s[i:]</code>, <code>s[j:]</code>, lcp显然为min(<code>height[rank[i]]</code> for i in range(i, j)). (<del>用心感受</del>). 用stRMQ预处理. 即可<code>O(1)</code>查询</p>
+<h5 id="POJ3581"><a href="#POJ3581" class="headerlink" title="POJ3581"></a>POJ3581</h5><p>给定N个数, a1, a2, …, an. 其中a1<strong>比其他数字都大</strong>. 把这个序列分成三段, 并将每段分别反转(reverse), 求能得到的字典序最小的序列是什么? (每段不能为空)</p>
+<p>N = 5</p>
+<p>A = {10, 1, 2, 3, 4}  =&gt; {10, 1} {2} {3, 4} =&gt; {1, 10} {2} {4, 3} =&gt; {1, 10, 2, 4, 3}(字典序最小)</p>
+<p>由于a1大于其他所有数, 第一段选择逆序之后字典序最小的后缀即可.</p>
+<p>an, an-1, [ai, …, a3, a2, a1] , <em>为什么一定要a1比其他数字都大?</em></p>
+<p>对于j&lt;i, [aj, …, a2, a1]的字典序一定小于[ai, …, a3, a2, a1].</p>
+<p>而j&gt;i时, [aj, …, <strong>ai</strong>, …, a1]在后缀数组中在[ai, …, a2, a1]之后, 是否意味着这一段反转之后一定不如[ai, … a1]优.</p>
+<p>考虑[6, 7, 4, 5, 4, 5]: [0,5]在sa中排在[0, 5, 0, 5]之前. 显然选择[0, 5, 0, 5]作为第一部分比选择[0, 5]作为第一部分更优.</p>
+<p>第二段和第三段的选择由于不存在如上性质, 不能直接反转之后求后缀数组中排序最小的后缀.</p>
+<p>做法: 拼接两次剩余的字符串, 逆序之后求后缀数组. 从最小开始寻找满足条件的即可.</p>
+<h5 id="重复子串"><a href="#重复子串" class="headerlink" title="重复子串"></a>重复子串</h5><ol>
+<li><p>可以重叠的重复子串.</p>
+<p>给定一个字符串, 求最长重复子串, 可以重叠.</p>
+<blockquote>
+<p>..height[0]</p>
+</blockquote>
+</li>
+<li><p>不可重叠的最长重复子串</p>
+<p>将问题转化为判定性问题. 二分答案.</p>
+<p>判定是否存在长度为k的, 不重叠的两个子串. 把height数组按照k进行分块. 同一块内height均&gt;=k, 因此同一块内的后缀的公共前缀长至少为k. 若此块内存在任意两个后缀能构成不想交的长为k的子串, 赢了.(<strong>这种对height数组分块的做法非常常用</strong>)</p>
+</li>
+<li><p>可重叠的, 至少出现k次的最长重复子串</p>
+<p>类似于上题, 二分答案, 判定时以k对height进行分块.</p>
+</li>
+</ol>
+<h5 id="子串数目"><a href="#子串数目" class="headerlink" title="子串数目"></a>子串数目</h5><p>​    给一个字符串, 求不相同的子串个数.</p>
+<p>​    字符串的子串与字符串后缀的前缀一一对应.</p>
+<h5 id="POJ-2406"><a href="#POJ-2406" class="headerlink" title="POJ 2406"></a>POJ 2406</h5><p>​    还是用kmp做吧…</p>
+<h5 id="POJ-3693"><a href="#POJ-3693" class="headerlink" title="POJ 3693"></a>POJ 3693</h5><p>​    给定字符串, 求重复次数最多的连续重复子串.</p>
+<p>​    枚举长度L . 当至少出现2次 时, 在 <code>s[0], s[L], s[2*L], ...</code> 中必然存在两个相邻的字符相同, 利用lcp查找<code>i*L, i*(L+1)</code>的lcp, 再向前查找最长能匹配多少, 就能得到长度为L的周期串最多重复K次. 更新答案.</p>
+</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2016/04/18/xiaosai/">PREV</a><a class="next" href="/2015/12/02/vue%E8%AE%B0%E5%BD%95/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    "skipTags": ["script","noscript","style","textarea","pre","code"],
+    processEscapes: true
+  },
+  "TeX": {
+    "equationNumbers": {
+      "autoNumber":"AMS"
+    }
+  },
+});</script></body></html>

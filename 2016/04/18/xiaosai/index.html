@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 校赛补题 · 乌云制作法</title><meta name="description" content="校赛补题 - shengrang"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/lucid5.jpg"><link rel="stylesheet" href="/css/apollo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" type="text/css"><meta name="generator" content="Hexo 4.2.0"></head><body><header><a class="logo-link" href="/"><img src="/mogu.gif"></a><ul class="nav nav-list"><li class="nav-list-item"><a class="nav-list-link" href="/" target="_self">BLOG</a></li><li class="nav-list-item"><a class="nav-list-link" href="/archives/" target="_self">ARCHIVE</a></li><li class="nav-list-item"><a class="nav-list-link" href="/tags/" target="_self">TAGS</a></li><li class="nav-list-item"><a class="nav-list-link" href="https://github.com/ShengRang" target="_blank">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">校赛补题</h1><div class="post-time">Apr 18, 2016</div><div class="post-content"><p>链接: (<a href="https://njoj.org/Contest/749/" target="_blank" rel="noopener">https://njoj.org/Contest/749/</a>)</p>
+<p>总体很屎.. F题的<code>n^2</code>一直觉得会T没有敲, 没想到其实是对的.. 1小时的时候做了A, C, J.. 然后就一直吃屎F..<br> <a id="more"></a></p>
+<h3 id="A"><a href="#A" class="headerlink" title="A"></a>A</h3><p>划水, 对字符串t也可以使用这种变换.. WA了一发.</p>
+<h3 id="B"><a href="#B" class="headerlink" title="B"></a>B</h3><p>几何, 占坑</p>
+<h3 id="C"><a href="#C" class="headerlink" title="C"></a>C</h3><blockquote>
+<p>给定你一个数n，请你统计出在[a,b]这个区间中和n互质的数的个数。两个数互质当且仅当他们除了1之外没有其他的公共因子或者他们最大的公共因子是1。1和任何数是互素的。</p>
+</blockquote>
+<p>容斥原理, 把求[1, r]的与n互质的数转换成[1, r]的与n不互质的数. 然后容斥一发</p>
+<script type="math/tex; mode=display">
+\sum_{C \subseteq B} {-1}^{size(C)-1}|\left \lfloor \frac{r}{\prod_{e\in C}e} \right \rfloor|</script><p>搞定. (这其实是我第一次写容斥.. 一发就对蛮爽的)</p>
+<h3 id="D"><a href="#D" class="headerlink" title="D"></a>D</h3><p>还是容斥, 占坑.</p>
+<h3 id="E"><a href="#E" class="headerlink" title="E"></a>E</h3><p>比较烦, 坑不填了</p>
+<h3 id="F"><a href="#F" class="headerlink" title="F"></a>F</h3><blockquote>
+<p>将一个给定的数列，拆分成K个不降序列，每个数出现且只出现一次，且在各序列中各个数相对于原数列的相对顺序不变。如7 6 9 8 10可以拆成 7 9 10和6 8。求最小的K值。</p>
+</blockquote>
+<p>水题.. 然而没敢写n^2.. 后面4小时都在死磕这题..</p>
+<p>最初想法.. 以 7 6 9 8 10为例.. 输入7, 新增一个序列, 输入6, 新增一个序列, 输入9, 放在之前最大的7的后面, … 类推..</p>
+<p>其实这是n^2的.. 当时我想n^2太慢, 来个二分, 结果不知道咋二分, 其实仔细想想, 维护的那个数组肯定是递减的数组..</p>
+<p><strong>需要面壁</strong> . 这种线性表的题已经不知道多少次被卡住了, 很烦. 当时一直在O(n)和nlogn那里死磕.. 没有稍微自习分析下.  需要做一些这种练习题.</p>
+<h3 id="G"><a href="#G" class="headerlink" title="G"></a>G</h3><blockquote>
+<p>给出一个非负整数A，将这个数字的最低位移动到最高位（原来的最高位变为次高位，次低位变成最低位），得到非负整数B，发现B恰好是A的k倍。现给出A的最低位的值n，和倍数k，求最小的非负整数B。</p>
+</blockquote>
+<p>比赛的时候没有看题..</p>
+<h3 id="H"><a href="#H" class="headerlink" title="H"></a>H</h3><p> anti-nim 游戏. 主要是nim都忘了..</p>
+<p>nim游戏是谁拿了最后一个石子谁赢, 这个游戏相反, 拿了最后一个的输.</p>
+<p>nim游戏的必败态就是x1 ^ … ^ xn = 0的状态.</p>
+<p>考虑anti-nim. 如果全部都是1, 那么n为奇数必败, 为偶数必胜.</p>
+<p>如果有很多1, 以及一个大于1, 必胜(可以根据1的个数选择把&gt;1变成=1或=0)</p>
+<p>SG=x1 ^ x2 ^ … ^ xn.</p>
+<p>当SG = 0. 充裕堆石子个数&gt;1, 孤单堆=1.</p>
+<p>S0: SG&gt;0, 充裕堆为0.</p>
+<p>S1: SG&gt;0, 充裕堆为1.</p>
+<p>S2: SG&gt;0, 充裕堆&gt;1.</p>
+<p>T0: SG=0, 充裕堆=0</p>
+<p>T2: SG=0, 充裕堆&gt;1</p>
+<p>显然S0为必败, T0必胜. S可以转移到S/T, T只能转移到S.</p>
+<p>S1必胜, 因为其可以转移到S0.</p>
+<p>T2只能转移到S1/S2, S1必胜, 若T0想赢只能转移到S2, 而S2可以重新转移回T2. 因此T2最终只能转移到S1, 必败.</p>
+<p>因此S2必胜.</p>
+<h3 id="I"><a href="#I" class="headerlink" title="I"></a>I</h3><p>没有看题, 题解说是2-SAT等我写一次2-SAT再说. 挖坑.</p>
+<h3 id="J"><a href="#J" class="headerlink" title="J"></a>J</h3><p>水题</p>
+</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2016/04/29/sam/">PREV</a><a class="next" href="/2016/04/05/sfx/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    "skipTags": ["script","noscript","style","textarea","pre","code"],
+    processEscapes: true
+  },
+  "TeX": {
+    "equationNumbers": {
+      "autoNumber":"AMS"
+    }
+  },
+});</script></body></html>

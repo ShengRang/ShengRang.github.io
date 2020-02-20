@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> TLSF 动态内存分配算法 · 乌云制作法</title><meta name="description" content="TLSF 动态内存分配算法 - shengrang"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/lucid5.jpg"><link rel="stylesheet" href="/css/apollo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" type="text/css"><meta name="generator" content="Hexo 4.2.0"></head><body><header><a class="logo-link" href="/"><img src="/mogu.gif"></a><ul class="nav nav-list"><li class="nav-list-item"><a class="nav-list-link" href="/" target="_self">BLOG</a></li><li class="nav-list-item"><a class="nav-list-link" href="/archives/" target="_self">ARCHIVE</a></li><li class="nav-list-item"><a class="nav-list-link" href="/tags/" target="_self">TAGS</a></li><li class="nav-list-item"><a class="nav-list-link" href="https://github.com/ShengRang" target="_blank">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">TLSF 动态内存分配算法</h1><div class="post-time">May 22, 2018</div><div class="post-content"><p>TLSF(two-level segregated-fit) 是一种用于实时操作系统的内存分配算法。</p>
+ <a id="more"></a>
+<p> DSA (dynamic storage allocation) 算法有一堆，主要就是让应用在运行时动态地请求内存。 大部分 DSA 算法都具有较好的平均响应时间。但是在实时操作系统中，重点需要考虑 worst-case (每次操作都需要预期时间内响应)。TLSF 是一个动态内存算法，时间复杂度 <strong>O(1)</strong>，在碎片问题上表现良好(A small and bounded fragmentation is also achieved by the proposed algorithm)。</p>
+<h5 id="RTOS-里对-DSA-算法有一些基本要求"><a href="#RTOS-里对-DSA-算法有一些基本要求" class="headerlink" title="RTOS 里对 DSA 算法有一些基本要求:"></a>RTOS 里对 DSA 算法有一些基本要求:</h5><ol>
+<li>Bounded response time. 要有确定的上界(worst-case)。</li>
+<li>Fast response time. 响应时间要快(上界要小)。</li>
+<li>Memory requests need to be always satisfied. 尽可能减少碎片带来的影响。</li>
+</ol>
+<h5 id="一些常见-DSA-算法"><a href="#一些常见-DSA-算法" class="headerlink" title="一些常见 DSA 算法:"></a>一些常见 DSA 算法:</h5><ol>
+<li>Sequential Fit: 把空闲内存用链表之类的数据结构(如Knuth的隐式空闲链表)维护起来，一般在分配或者回收的时候会进行线性查找，复杂度不算优美。常见一些适配比如: Fast-Fit, First-Fit, Next-Fit, Worst-Fit.</li>
+<li>Segregated Free Lists: 分离适配，维护一组空闲链表，每个空闲链表里的空闲块大小都在某个特定 size 或者 size range.</li>
+<li>Buddy Systems: 伙伴系统，其实也就是一种特定的分离适配了。</li>
+<li>Indexed Fit: 基于一些高级数据结构对空闲块进行索引，比如基于 AVL 维护空闲块，分配回收的时候会产生一些 log 的效果。</li>
+<li>Bitmap Fit: Indexed Fit 的变种，用 bitset 这样的数据结构去维护空闲块是否被使用。</li>
+</ol>
+<h5 id="TLSF-算法设计要点"><a href="#TLSF-算法设计要点" class="headerlink" title="TLSF 算法设计要点:"></a>TLSF 算法设计要点:</h5><ol>
+<li>Immediate coalescing: 回收内存的时候立即合并空闲块。</li>
+<li>Splitting thershold: 管理内存的最小分配单元是 16B . 这个与实现有关，比如 16B 刚好够存一些元数据。</li>
+<li>Good-fit strategy: <strong>尽可能</strong> 选取最小的满足需求的内存块，具体算法里为了求快，选出来的这个内存快只能说是比较接近最小的，问题不大。</li>
+<li>No reallocation: 不像 *nix 里面有 <code>sbrk()</code> 这种伸展堆大小的调用，可用内存池就是固定大小的。</li>
+<li>Same strategy for all block sizes: 大概是指每次分配采用同种算法策略，而不是一堆策略一起瞎搞(比如根据请求大小采用不同的适配方法)。这主要是为了确保稳定的上界</li>
+<li>Memory is not cleaned-up: 不对内存进行清0这种操作，这意味着啥写过 C 的应该都懂。</li>
+</ol>
+<h5 id="TLSF-算法的数据结构和流程"><a href="#TLSF-算法的数据结构和流程" class="headerlink" title="TLSF 算法的数据结构和流程"></a>TLSF 算法的数据结构和流程</h5><p>TLSF 空闲内存用如下数据结构进行维护<br><img src="https://ws3.sinaimg.cn/large/006tNc79ly1frk41wipfxj30f30cswfr.jpg" alt="TLSF 空闲内存数据结构"><br>空闲内存块和已分配内存块用如下数据结构维护分配回收所需的信息<br><img src="https://ws1.sinaimg.cn/large/006tNc79ly1frk441gmmrj30e90bx0tm.jpg" alt=""></p>
+<p>TLSF 算法用两级结构对空闲块按大小进行划分。First level 用一个数组描述了大范围区间，按这个大区间范围查找 Second level 的数组。Second level 有一系列数组，每个数组通过 First level 的某个元素索引而来，并将对应的 First level 中的大小区间进行了划分（分成 <strong>$2^{SLI}$</strong> 个大小相同的区间），每个区间下存在一个空闲链表，该空闲链表内的每个空闲块大小均在此区间内。例如图中的 49252b 和 49356b 两个空闲块，在 First level 对应 $2^{15}$ 元素，该元素代表的区间为 $[2^{15}, 2^{16})$，在 Second level 对应区间 $[2^{15}+2^{13}*2, 2^{15}+2^{13}*3)$ 。</p>
+<p>同时，TLSF 对每个数组使用 bitmap 进行维护，对应位为 1 表示下辖的区间内存在可用空闲块。</p>
+<p>内存块数据结构则维护了物理地址上的信息。</p>
+<p>具体算法流程:<br><img src="https://ws3.sinaimg.cn/large/006tNc79ly1frk58f3ppcj30fu07zt9w.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79ly1frk58w6k8jj30fq04wjs1.jpg" alt=""></p>
+<p>总体挺简单的，加点文字描述。<code>malloc</code> 的时候，根据 size 查找尽量最小符合要求的空闲块，切割空闲块，余下的空闲块插入到合适的位置。注意这里是尽量最小(good-fit)，例如前面数据结构图 fig1. 里，请求 90b 大小，不应该去 $[2^6+16,2^6+32)$ 进行查找，因为在这个区间里可能存在 89b 这种不符合要求的空闲块，为了避免在这个区间的空闲链表里遍历，直接把区间向上扩大，比如 $[2^6+32,2^6+48)$。具体做法是配合两级 bitmap，首先定位到 90b 应该在的区间，然后在 second level 中计算 bitmap 中最低且高于所在位的1，这意味着在 second level 中比所需大小所在区间更大的区间中，最小的空闲块区间。如果 second level 无法找到这样的区间，则在 first level 中用相同办法进行查找。</p>
+<p>举例。请求 75b，计算可得 First level 区间为 $[2^6, 2^7)$，Second level 区间为 $[2^6, 2^6+16)$，此区间下可能存在 $[2^6,75)$ 的空闲块，为了避免判断，查找最小值更大的区间。查看 second level 的 bitmap: 0010，$[2^6,2^6+16)$ 对应最低位的0，比他高位的，最低的 1 代表的区间为 $[2^6+16,2^6+32)$ ，这里存在空闲块且最小为 80b，直接拿出第一个空闲块即可。如果 second level 无法找到(高位全是0)，则到 first level 用这样的方法查找最小的第一级区间，再到其 second level 中查找最小第二级区间。</p>
+<p>空闲块的插回直接计算所在位置后插入链表即可。</p>
+<p>贴一个论文里写的算法实测效果<br><img src="https://ws1.sinaimg.cn/large/006tNc79ly1frk5os3sesj30ng09ejtt.jpg" alt=""></p>
+<h5 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h5><ol>
+<li>论文里对一些位运算的假设是 O(1)，当内存大小确定在几个 G 的时候，一般 first level只需要32个区间，认为这是 O(1) 当然没有问题(实际上应该是 O(log n) 这样)，然而和其他算法比较复杂度的时候，没写 log ，有点双标</li>
+<li>SLI 一般选择 4 或 5 ，也就是 16、32 分区间</li>
+</ol>
+<p>参考文献：</p>
+<ol>
+<li>Masmano, Miguel, et al. “TLSF: A new dynamic memory allocator for real-time systems.” Real-Time Systems, 2004. ECRTS 2004. Proceedings. 16th Euromicro Conference on. IEEE, 2004.</li>
+<li>Masmano, Miguel, et al. “Implementation of a constant‐time dynamic storage allocator.” Software: Practice and Experience 38.10 (2008): 995-1026.</li>
+</ol>
+</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2018/09/12/state-monad/">PREV</a><a class="next" href="/2018/01/06/algo-practise/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    "skipTags": ["script","noscript","style","textarea","pre","code"],
+    processEscapes: true
+  },
+  "TeX": {
+    "equationNumbers": {
+      "autoNumber":"AMS"
+    }
+  },
+});</script></body></html>
