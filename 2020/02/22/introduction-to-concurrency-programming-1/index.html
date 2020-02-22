@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 并发编程基础 - 重排序和屏障 · 乌云制作法</title><meta name="description" content="并发编程基础 - 重排序和屏障 - shengrang"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/lucid5.jpg"><link rel="stylesheet" href="/css/apollo.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" type="text/css"><meta name="generator" content="Hexo 4.2.0"></head><body><header><a class="logo-link" href="/"><img src="/mogu.gif"></a><ul class="nav nav-list"><li class="nav-list-item"><a class="nav-list-link" href="/" target="_self">BLOG</a></li><li class="nav-list-item"><a class="nav-list-link" href="/archives/" target="_self">ARCHIVE</a></li><li class="nav-list-item"><a class="nav-list-link" href="/tags/" target="_self">TAGS</a></li><li class="nav-list-item"><a class="nav-list-link" href="https://github.com/ShengRang" target="_blank">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">并发编程基础 - 重排序和屏障</h1><div class="post-time">Feb 22, 2020</div><div class="post-content"><p>本篇介绍指令重排序，optimization barrier 和 memory barrier。</p>
+<a id="more"></a>
+<p>pending</p>
+<p><img src="/images/gezi.jpg" alt=""></p>
+</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2020/02/22/introduction-to-concurrency-programming-2/">PREV</a><a class="next" href="/2020/02/21/introduction-to-concurrency-programming-0/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    "skipTags": ["script","noscript","style","textarea","pre","code"],
+    processEscapes: true
+  },
+  "TeX": {
+    "equationNumbers": {
+      "autoNumber":"AMS"
+    }
+  },
+});</script></body></html>
