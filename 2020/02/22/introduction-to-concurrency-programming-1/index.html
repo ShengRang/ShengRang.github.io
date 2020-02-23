@@ -30,8 +30,17 @@
 </blockquote>
 </li>
 </ol>
-<p>这几种是常见的指令重排情况和对应的 barrier。在特定的处理器上，并不是这四种重排序都有可能发生，有些处理器体系结构确保了有些重排序是不会发生的。参考下图，x86 上只会出现 StoreLoad 型重排序。</p>
+<p>这几种是常见的指令重排情况和对应的 barrier。在特定的处理器上，并不是这四种重排序都有可能发生，有些处理器体系结构确保了有些重排序是不会发生的。参考下图。x86 上只会出现 StoreLoad 型重排序(个别 x86 不一样)，Alpha 架构(神威·太湖之光就是这个架构)就一切皆有可能了。</p>
 <p><img src="memory_ordering_arch.png" alt=""></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本来想继续讲一些 <em>acquire-release</em> 语义，强弱内存模型啥的，还是放在后续的文章里讲解吧。</p>
+<p>参考资料:</p>
+<ol>
+<li><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></li>
+<li><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Memory_ordering" target="_blank" rel="noopener">Memory ordering</a></li>
+<li>Understanding the Linux Kernel</li>
+<li><a href="http://gee.cs.oswego.edu/dl/jmm/cookbook.html" target="_blank" rel="noopener">The JSR-133 Cookbook for Compiler Writers</a></li>
+</ol>
 </div></article></div></section><footer><div class="paginator"><a class="prev" href="/2020/02/22/introduction-to-concurrency-programming-2/">上一篇</a><a class="next" href="/2020/02/21/introduction-to-concurrency-programming-0/">下一篇</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
   tex2jax: {
     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
