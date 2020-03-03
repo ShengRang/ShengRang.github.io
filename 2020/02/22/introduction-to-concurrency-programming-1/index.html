@@ -30,7 +30,7 @@
 </blockquote>
 </li>
 </ol>
-<p>这几种是常见的指令重排情况和对应的 barrier。在特定的处理器上，并不是这四种重排序都有可能发生，有些处理器体系结构确保了有些重排序是不会发生的。参考下图。x86 上只会出现 StoreLoad 型重排序(个别 x86 不一样)，Alpha 架构(神威·太湖之光就是这个架构)就一切皆有可能了。</p>
+<p>这几种是常见的指令重排情况和对应的 barrier。在特定的处理器上，并不是这四种重排序都有可能发生，有些处理器体系结构确保了有些重排序是不会发生的。参考下图。x86 上只会出现 StoreLoad 型重排序(个别 x86 不一样)，Alpha 架构(神威·太湖之光就是这个架构)就一切皆有可能了。跑个题，x86 虽然只有 StoreLoad 重排序，lfence 指令是有用的，近似于 NOP，但仍有其必要场景。具体参考 <a href="https://www.zhihu.com/question/29465982/answer/384041731" target="_blank" rel="noopener">https://www.zhihu.com/question/29465982/answer/384041731</a></p>
 <p><img src="memory_ordering_arch.png" alt=""></p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本来想继续讲一些 <em>acquire-release</em> 语义，强弱内存模型啥的，还是放在后续的文章里讲解吧。</p>
 <p>参考资料:</p>
