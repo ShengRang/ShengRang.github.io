@@ -29,11 +29,33 @@
 <li><em>Load</em> 操作，可以选择 <code>memory_order_relaxed</code>, <code>memory_order_consume</code>, <code>memory_order_acquire</code>, <code>memory_order_seq_cst</code></li>
 <li><em>Read-modify-write</em> 操作，可以选择 <code>memory_order_relaxed</code>, <code>memory_order_consume</code>, <code>memory_order_acquire</code>, <code>memory_order_release</code>, <code>memory_order_acq_rel</code>, <code>memory_order_seq_cst</code></li>
 </ol>
-<p>这里不展开介绍各个 atomic 类型的每个操作的用法，这部分内容可以查 cppreference 之类的文档。原因之前也讲过了，利用原子操作可以避免原子变量本身处于操作半完成的状态，但是本文更关注原子操作在并发编程中建立同步关系的应用，不是所有问题都可以像前面一样只利用简单的原子操作解决。学会利用 <code>std::atomic</code> 搭配合适的 memory_order 进行同步，可以在互斥锁之外增加并发编程的可选项。</p>
+<p>这里不展开介绍各个 atomic 类型的每个操作的用法，这部分内容可以查 cppreference 之类的文档。原因之前也讲过了，利用原子操作可以避免原子变量本身处于操作半完成的状态，但是本文更关注原子操作在并发编程中建立同步关系的应用，不是所有问题都可以像前面一样只利用简单的原子操作解决。学会利用 <code>std::atomic</code> 上的原子操作搭配合适的 memory_order 进行同步 (跨线程建立原子变量的同步关系，从而对非原子的操作建立同步关系)，可以在互斥锁之外增加并发编程的可选项。</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>为了确保文章质量，我会尽可能避免写出错误的观点。这方面的内容比较复杂，在学的时候也感到比较困扰。网上的帖子、书上可能会在一些地方讲的有出入或者不够清晰，所以专门写一节 <strong>基本概念</strong>，内容尽量按优先级来自 c++ 标准，cppreference，C++ Concurrency in Action。我会先给出英文和出处，然后用中文做一些解释，英文好的观众老爷建议阅读原文。</p>
+<ul>
+<li>Two expression evaluations conflict if one of them modifies a memory location (1.7) and the other one accesses or modifies the same memory location. [c++ standard 1.10]<br>The execution of a program contains a data race if it contains two conﬂicting actions in different threads, at least one of which is not atomic, and neither happens before the other. Any such data race results in undefined behavior. [c++ standard 1.10]</li>
+<li>If one evaluation modifies a memory location, and the other reads or modifies the same memory location, and if at least one of the evaluations is not an atomic operation, the behavior of the program is undefined (the program has a data race) unless there exists a happens-before relationship between these two evaluations.[cppreference]</li>
+</ul>
+<blockquote>
+<p>上面这三句话定义了 conflict 和 data race。如果两个操作针对同一个 memory location，其中至少一个是写入，那么这俩操作是冲突的。如果至少其中一个是非原子且没有 happens before(后面给出定义，大概就是一个比另一个先发生，学过分布式的应该都知道 lamport 提出的这个概念) 另一个的，那么这个程序是存在 data race 的。任何这种 data race 导致 <strong>undefined behavior</strong>。C++ 14 的 data race 会比这个复杂一点，和 signal handler 有关这里不讨论。</p>
+</blockquote>
+<ul>
+<li>The library defines a number of atomic operations (Clause 29) and operations on mutexes (Clause 30) that are specially identified as synchronization operations. These operations play a special role in making assignments in one thread visible to another. A synchronization operation on one or more memory locations is either a consume operation, an acquire operation, a release operation, or both an acquire and release operation. A synchronization operation without an associated memory location is a fence and can be either an acquire fence, a release fence, or both an acquire and release fence. In addition, there are relaxed atomic operations, which are not synchronization operations, and atomic read-modify-write operations, which have special characteristics.[c++ standard 1.10]</li>
+</ul>
+<blockquote>
+<p>c++ library 定义了一些原子操作和互斥操作，统称 synchronization operations(下面可能简写成 sync op)。这些操作在跨线程同步的时候做可见性保证。synchronization operation 分成这几种：consume operation, acquire operation, release operation, both an acquire and release operation. 没有关联到特定 memory location 的 sync op 是 fence，can be either an acquire fence, a release fence, or both an acquire and release fence。另外，relaxed atomic operations 不是 sync op，原子 read-modify-write 操作有一些特殊性质。这段话说了什么是 sync op，以及 sync op 的几种类型，这个分类在下面会用到。</p>
+</blockquote>
+<ul>
+<li>All modifications to a particular atomic object M occur in some particular total order, called the modification order of M. If A and B are modifications of an atomic object M and A happens before (as defined below) B, then A shall precede B in the modification order of M, which is defined below.[ Note: This states that the modification orders must respect the “happens before” relationship. — end note ] [ Note: There is a separate order for each atomic object. There is no requirement that these can be combined into a single total order for all objects. In general this will be impossible since diﬀerent threads may observe modifications to diﬀerent objects in inconsistent orders. — end note ][c++ standard 1.10]</li>
+<li>All modifications to any particular atomic variable occur in a total order that is specific to this one atomic variable.[cppreference]</li>
+<li>Every object in a C++ program has a modification order composed of all the writes to that object from all threads in the program, starting with the object’s initialization. In most cases this order will vary between runs, but in any given execution of the program all threads in the system must agree on the order. If the object in question isn’t one of the atomic types described in section 5.2, you’re responsible for making certain that there’s sufficient synchronization to ensure that threads agree on the modification order of each variable. If different threads see distinct sequences of values for a single variable, you have a data race and undefined behavior (see section 5.1.2). If you do use atomic operations, the compiler is responsible for ensuring that the necessary synchronization is in place.[C++ Concurrency in Action 5.1.3]</li>
+</ul>
+<blockquote>
+<p>上面前两段话说明了原子对象的修改顺序。每个原子对象 M 都有一个关于自己的修改操作的顺序，这是一个单独的全序，叫做 modification order。意思就是对于一个特定的原子对象 M，所有对他的写入，最终在 M 看来都是按照 modification order 的顺序逐一生效的。如果 A 和 B 都是对 M 的修改，并且 A happens before B，那么在 M 的修改顺序里，A 应该在 B 的前面。最后一段意思大概是说每个对象 (包括非原子) 都有一个 modification order，原子对象确保所有线程都看到这个 modification order，达成共识。而非原子对象天然没有这个保证，如果不同线程没有达成共识，可能不同线程看到不一样的 order，那就产生了 data race，ub 了，所以你就得通过合适的同步确保所有线程达成共识。</p>
+</blockquote>
 <p><img src="/images/gezi.jpg" alt=""><br><!-- <div class="tip">
 想控制好内容质量，这一篇写些什么内容不写什么内容，按什么顺序、举什么例子想了很久。C++ memory order 确实很复杂，想讲清楚比较困难，所以可能完成这篇需要鸽一阵子。
 </div> --></p>
-</div></article></div></section><footer><div class="paginator"><a class="next" href="/2020/02/22/introduction-to-concurrency-programming-1/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+</div></article></div></section><footer><div class="paginator"><a class="next" href="/2020/02/22/introduction-to-concurrency-programming-1/">下一篇</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
   tex2jax: {
     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
