@@ -14,7 +14,7 @@ Y\ F = (\lambda x. F (x\ x))(\lambda x. F(x\ x)) = F\ (\lambda x.F(x\ x))(\lambd
 <script type="math/tex; mode=display">
 Y = \lambda\ f.\ (\lambda g.\ g\ g)(\lambda x.f(x\ x))</script><p>他的推导和之前的推导差不多，就不展开说了。</p>
 <p>至此我们得到了一个 <strong>通用</strong> 的可以求lambda演算中任意函数的不动点的Y组合子，有了他之后，构造递归的匿名函数就不是什么大事了。<br>一般流程就是先构造 <code>g = lambda f: (lambda ...: ...)</code>，使得 <code>g(f) = f</code> 时满足需求，然后对 g 应用 Y组合子即得到最终的函数。</p>
-</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2017/03/02/nust-gpa/">上一篇</a><a class="next" href="/2016/08/10/python-coroutine/">下一篇</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+</div></article></div></section><footer><div class="paginator"><a class="prev" href="/2017/03/02/nust-gpa/">PREV</a><a class="next" href="/2016/08/10/python-coroutine/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
   tex2jax: {
     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
