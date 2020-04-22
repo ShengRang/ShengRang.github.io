@@ -101,7 +101,7 @@
 </li>
 </ul>
 <p>[ Note: The “inter-thread happens before” relation describes arbitrary concatenations of “sequenced before”, “synchronizes with” and “dependency-ordered before” relationships, with two exceptions. The first exception is that a concatenation is not permitted to end with “dependency-ordered before” followed by “sequenced before”. The reason for this limitation is that a consume operation participating in a “dependencyordered before” relationship provides ordering only with respect to operations to which this consume operation actually carries a dependency. The reason that this limitation applies only to the end of such a concatenation is that any subsequent release operation will provide the required ordering for a prior consume operation. The second exception is that a concatenation is not permitted to consist entirely of “sequenced before”. The reasons for this limitation are (1) to permit “inter-thread happens before” to be transitively closed and (2) the “happens before” relation, defined below, provides for relationships consisting entirely of “sequenced before”. — end note ] [c++ standard 1.10]</p>
-<p>这定义了 inter-thread happens before 关系，大致可以认为是组合了 sequenced before, synchronizes with, dependency-ordered before 关系，但是第三条对细节上做了一些调整。第一个调整让依赖关系更加精细，“sequenced before” 后面跟着 “dependency-ordered before”  是不能传递出 inter-thread happens before 的，因为依赖关系想要更精细一些（carries a dependency 比 sequenced before 精细，刻画了求值之间的依赖），没有依赖的求值不需要可见。</p>
+<p>这定义了 inter-thread happens before 关系，大致可以认为是组合了 sequenced before, synchronizes with, dependency-ordered before 关系，但是第三条对细节上做了一些调整。第一个调整让依赖关系更加精细， “dependency-ordered before” 后面跟着 “sequenced before” 是不能传递出 inter-thread happens before 的，因为依赖关系想要更精细一些（carries a dependency 比 sequenced before 精细，刻画了求值之间的依赖），没有依赖的求值不需要可见。</p>
 <p>最后，我们终于来到 <em>happens before</em> 关系的定义：<br>An evaluation A happens before an evaluation B if:</p>
 <ul>
 <li>A is sequenced before B, or</li>
@@ -207,7 +207,7 @@
 <li><a href="https://stackoverflow.com/questions/39053600/does-standard-c11-guarantee-that-memory-order-seq-cst-prevents-storeload-reord" target="_blank" rel="noopener">does-standard-c11-guarantee-that-memory-order-seq-cst-prevents-storeload-reord</a></li>
 <li><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html" target="_blank" rel="noopener">Java Language Specification, Chapter 17. Threads and Locks</a></li>
 </ol>
-</div></article></div></section><footer><div class="paginator"><a class="next" href="/2020/02/22/introduction-to-concurrency-programming-1/">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+</div></article></div></section><footer><div class="paginator"><a class="next" href="/2020/02/22/introduction-to-concurrency-programming-1/">下一篇</a></div><div class="copyright"><p>© 2015 - 2020 <a href="https://shengrang.github.io">shengrang</a>, unless otherwise noted.</p></div></footer><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
   tex2jax: {
     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
