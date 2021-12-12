@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="后缀数组"/><meta name="keywords" content="算法, 数据结构, 字符串, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2016/04/05/sfx/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>后缀数组 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">后缀数组
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-04-05
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#后缀数组"><span class="toc-text">后缀数组</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#后缀数组的应用"><span class="toc-text">后缀数组的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#最长公共前缀"><span class="toc-text">最长公共前缀</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#POJ3581"><span class="toc-text">POJ3581</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#重复子串"><span class="toc-text">重复子串</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#子串数目"><span class="toc-text">子串数目</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#POJ-2406"><span class="toc-text">POJ 2406</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#POJ-3693"><span class="toc-text">POJ 3693</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><!-- # 后缀数组 & 后缀自动机 -->
+<p>寒假学了一下字符串里的后缀数组， 以及入门了后缀自动机。 在此记录。</p>
+<p>后缀数组和后缀自动机都是处理字符串问题的有力工具.<br> <a id="more"></a></p>
+<h3 id="后缀数组"><a href="#后缀数组" class="headerlink" title="后缀数组"></a>后缀数组</h3><p>推荐看看 <a href="http://wenku.baidu.com/link?url=YPppzoY5B0lRtOLGQDdoJ-SyDx2U9KRqmBEfgSWvCTs8xbs8RCKnC7qRqFsYRXDzEQTLDgmfVXIoYAPWcvMQljrVGMJJkgEuerAVe5Rm3sm" target="_blank" rel="noopener">这篇文章</a>, 关于后缀数组也基本是从这篇文章学习。</p>
+<p><strong>用字符数组s表示字符串</strong>: s[i:j]表示字符s[i], s[i+1], … , s[j-1]组成的字符串。len(s)表示字符串长度， s[:j]即s[0:j], s[i:]即s[i:len(s)]。 <del>会Python的都知道我在说啥</del></p>
+<p><strong>子串和后缀的定义</strong>: 对于字符串s， 则s[i:j]为s的一个子串。 s[i:]为s的后缀。(s[:j]表示前缀)</p>
+<p><strong>字符串的大小关系</strong>: 对于两个字符串sa, sb. 分别从串首依次向右比较, 出现第一次 <code>sa[i]&lt;sb[i]</code> . 则<code>sa&lt;sb</code> .若 <code>sa[i]&gt;sb[i]</code> 则 <code>sa&gt;sb</code>, 若 <code>sa[i]==sb[i]</code>, 则i++, 继续比较. 若直到 <code>i==len(sa)-1</code> 或 <code>i==len(sb)-1</code> .仍无法比较出大小, 认定较短的字符串较小.</p>
+<blockquote>
+<p>后缀数组的核心思想就是在O(n logn)/O(n)的时间内对一个字符串的所有后缀进行排序. 并利用排序后的结果处理一些字符串问题.</p>
+</blockquote>
+<p><strong>排序结果的保存</strong>:  对于字符串s, 用两个数组sa, rank记录排序结果. sa[i]表示第i小的后缀为s[sa[i]:], rank[i]表示后缀s[i:]为第rank[i]小的后缀.</p>
+<hr>
+<h4 id="后缀数组的应用"><a href="#后缀数组的应用" class="headerlink" title="后缀数组的应用"></a>后缀数组的应用</h4><h5 id="最长公共前缀"><a href="#最长公共前缀" class="headerlink" title="最长公共前缀"></a>最长公共前缀</h5><p>定义height数组: height[i]表示s[sa[i]:]和s[sa[i+1]:]的最长公共前缀。即按照大小排序的后缀中, 相邻两个后缀的公共前缀.</p>
+<p>height数组可以在求出sa, rank的前提下在O(n)时间内求出。</p>
+<p>考虑<code>height[rank[i]]</code>和<code>height[rank[i+1]]</code>.</p>
+<p><code>height[rank[i]]</code>表示后缀<code>s[i:]</code> 和后缀<code>s[sa[rank[i]+1]:]</code>的最长公共前缀x1.</p>
+<p>对于后缀<code>s[i+1:]</code>, 显然<code>s[sa[rank[i]+1]+1:]</code>的最长公共前缀为x1-1. (之前两个字符串均删除首字符).</p>
+<p>故</p>
+<script type="math/tex; mode=display">
+height[rank[i+1]]  >= height[rank[i]]-1</script><p>因此按照该顺序进行计算height数组, 无须每次从头比较, 可以达到<code>O(n)</code>复杂度.</p>
+<p>代码如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buildLcp</span><span class="params">(<span class="keyword">int</span> *s, <span class="keyword">int</span> *sa, <span class="keyword">int</span> *rank, <span class="keyword">int</span> *lcp, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = len;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=n; i++)</span><br><span class="line">        rank[sa[i]] = i;</span><br><span class="line">    <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">    lcp[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> j = sa[rank[i]<span class="number">-1</span>];</span><br><span class="line">        <span class="keyword">if</span>(h&gt;<span class="number">0</span>) h--;</span><br><span class="line">        <span class="keyword">for</span>(; j+h&lt;n &amp;&amp; i+h&lt;n; h++)</span><br><span class="line">            <span class="keyword">if</span>(s[i+h] != s[j+h]) <span class="keyword">break</span>;</span><br><span class="line">        lcp[rank[i]<span class="number">-1</span>] = h;</span><br><span class="line">    &#125;</span><br><span class="line">    lcp[n] = <span class="number">105000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>求得<code>height</code>数组之后即可知道按后缀大小排序的任意两个相邻后缀的lcp. 对于任意两个后缀<code>s[i:]</code>, <code>s[j:]</code>, lcp显然为min(<code>height[rank[i]]</code> for i in range(i, j)). (<del>用心感受</del>). 用stRMQ预处理. 即可<code>O(1)</code>查询</p>
+<h5 id="POJ3581"><a href="#POJ3581" class="headerlink" title="POJ3581"></a>POJ3581</h5><p>给定N个数, a1, a2, …, an. 其中a1<strong>比其他数字都大</strong>. 把这个序列分成三段, 并将每段分别反转(reverse), 求能得到的字典序最小的序列是什么? (每段不能为空)</p>
+<p>N = 5</p>
+<p>A = {10, 1, 2, 3, 4}  =&gt; {10, 1} {2} {3, 4} =&gt; {1, 10} {2} {4, 3} =&gt; {1, 10, 2, 4, 3}(字典序最小)</p>
+<p>由于a1大于其他所有数, 第一段选择逆序之后字典序最小的后缀即可.</p>
+<p>an, an-1, [ai, …, a3, a2, a1] , <em>为什么一定要a1比其他数字都大?</em></p>
+<p>对于j&lt;i, [aj, …, a2, a1]的字典序一定小于[ai, …, a3, a2, a1].</p>
+<p>而j&gt;i时, [aj, …, <strong>ai</strong>, …, a1]在后缀数组中在[ai, …, a2, a1]之后, 是否意味着这一段反转之后一定不如[ai, … a1]优.</p>
+<p>考虑[6, 7, 4, 5, 4, 5]: [0,5]在sa中排在[0, 5, 0, 5]之前. 显然选择[0, 5, 0, 5]作为第一部分比选择[0, 5]作为第一部分更优.</p>
+<p>第二段和第三段的选择由于不存在如上性质, 不能直接反转之后求后缀数组中排序最小的后缀.</p>
+<p>做法: 拼接两次剩余的字符串, 逆序之后求后缀数组. 从最小开始寻找满足条件的即可.</p>
+<h5 id="重复子串"><a href="#重复子串" class="headerlink" title="重复子串"></a>重复子串</h5><ol>
+<li><p>可以重叠的重复子串.</p>
+<p>给定一个字符串, 求最长重复子串, 可以重叠.</p>
+<blockquote>
+<p>..height[0]</p>
+</blockquote>
+</li>
+<li><p>不可重叠的最长重复子串</p>
+<p>将问题转化为判定性问题. 二分答案.</p>
+<p>判定是否存在长度为k的, 不重叠的两个子串. 把height数组按照k进行分块. 同一块内height均&gt;=k, 因此同一块内的后缀的公共前缀长至少为k. 若此块内存在任意两个后缀能构成不想交的长为k的子串, 赢了.(<strong>这种对height数组分块的做法非常常用</strong>)</p>
+</li>
+<li><p>可重叠的, 至少出现k次的最长重复子串</p>
+<p>类似于上题, 二分答案, 判定时以k对height进行分块.</p>
+</li>
+</ol>
+<h5 id="子串数目"><a href="#子串数目" class="headerlink" title="子串数目"></a>子串数目</h5><p>​    给一个字符串, 求不相同的子串个数.</p>
+<p>​    字符串的子串与字符串后缀的前缀一一对应.</p>
+<h5 id="POJ-2406"><a href="#POJ-2406" class="headerlink" title="POJ 2406"></a>POJ 2406</h5><p>​    还是用kmp做吧…</p>
+<h5 id="POJ-3693"><a href="#POJ-3693" class="headerlink" title="POJ 3693"></a>POJ 3693</h5><p>​    给定字符串, 求重复次数最多的连续重复子串.</p>
+<p>​    枚举长度L . 当至少出现2次 时, 在 <code>s[0], s[L], s[2*L], ...</code> 中必然存在两个相邻的字符相同, 利用lcp查找<code>i*L, i*(L+1)</code>的lcp, 再向前查找最长能匹配多少, 就能得到长度为L的周期串最多重复K次. 更新答案.</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2016/04/05/sfx/">https://blog.runc.dev/2016/04/05/sfx/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+            <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/04/18/xiaosai/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">校赛补题</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2015/12/02/vue%E8%AE%B0%E5%BD%95/">
+        <span class="next-text nav-default">vue记录</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

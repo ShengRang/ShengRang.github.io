@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="算法练习题"/><meta name="keywords" content="算法, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2018/01/06/algo-practise/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>算法练习题 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">算法练习题
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-01-06
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、判断题"><span class="toc-text">一、判断题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、问答题"><span class="toc-text">二、问答题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#三、分治题"><span class="toc-text">三、分治题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四、动态规划题"><span class="toc-text">四、动态规划题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#五、分支限界"><span class="toc-text">五、分支限界</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>哇，我们都是热爱算法的好孩子。<br><a id="more"></a></p>
+<h4 id="一、判断题"><a href="#一、判断题" class="headerlink" title="一、判断题"></a>一、判断题</h4><ol>
+<li><p>一个正确的算法,对于每个合法输入,都会在有限的时间内输出一个满足要求的结果。</p>
+<blockquote>
+<p>正确</p>
+</blockquote>
+</li>
+<li><p>NP 完全问题比其他所有 NP 问题都要难。</p>
+<blockquote>
+<p>错误？所有 NP 问题均能转化为 NPC 问题，准确说应该是 NPC 问题至少也会和其他 NP 问题一样难，可能更难（NPC是NP的子集）</p>
+</blockquote>
+</li>
+<li><p>回溯法用深度优先法或广度优先法搜索状态空间树。</p>
+<blockquote>
+<p>错误。仅 DFS</p>
+</blockquote>
+</li>
+<li><p>在动态规划中,各个阶段所确定的策略就构成一个策略序列,通常称为一个决策。</p>
+<blockquote>
+<p>正确</p>
+</blockquote>
+</li>
+<li><p>𝑃类和𝑁𝑃类问题的关系用𝑃 ⊂ 𝑁𝑃来表示是错误的。</p>
+<blockquote>
+<p>错误。P类是NP类的子集(P类问题的多项式算法作为certificate checking algorithm不需要接受certificate)</p>
+</blockquote>
+</li>
+<li><p>若近似算法 A 求解某极小化问题<strong>一实例</strong>的解为$s_a$,且已知该问题的最优解为$s_a/3$ ,则该近似算法的性能比为 3。</p>
+<blockquote>
+<p>错误。性能比是精度的上确界</p>
+</blockquote>
+</li>
+<li><p>通常来说,算法的最坏情况的时间复杂行比平均情况的时间复杂性容易计算。</p>
+<blockquote>
+<p>正确。好像确实是这样.</p>
+</blockquote>
+</li>
+<li><p>若 P2 多项式时间转化为(polynomial transforms to) P1,则 P2 至少与 P1 一样难。</p>
+<blockquote>
+<p>错误。P2 至少不会比 P1 更难（ P2 可能会比 P1 简单）</p>
+</blockquote>
+</li>
+<li><p>快速排序算法的平均时间复杂度是O(𝑛 log 𝑛),使用随机化快速排序算法可以将平均时间复杂度降得更低。</p>
+<blockquote>
+<p>错误。并不能，随机快排和普通快排平均情况性能一样(最坏复杂度也一样)，而且比较排序的复杂度有下界。</p>
+</blockquote>
+</li>
+<li><p>基于比较的寻找数组A[1, … , 𝑛]中最大元素的问题下界是Ω(𝑛/3)。</p>
+<blockquote>
+<p>错误。这么神奇的吗，输入就已经n了。</p>
+</blockquote>
+</li>
+<li><p>O(𝑓(𝑛)) +O(𝑔(𝑛)) =O(min{𝑓(𝑛),𝑔(𝑛)})</p>
+<blockquote>
+<p>错误。应该是max, 比如$f(n)=n^3$, $g(n)=n$, 加起来应该是$n^3$</p>
+</blockquote>
+</li>
+<li><p>若𝑓(𝑛) =Ω(𝑔(𝑛)) ,𝑔(𝑛) =Ω(h(𝑛)) ,则𝑓(𝑛) =Ω(h(𝑛))</p>
+<blockquote>
+<p>正确。没毛病</p>
+</blockquote>
+</li>
+<li><p>若𝑓(𝑛) =O(𝑔(𝑛) ,则𝑔(𝑛) =Ω(𝑓(𝑛))</p>
+<blockquote>
+<p>正确。当然了</p>
+</blockquote>
+</li>
+<li><p>贪婪技术所做的每一步选择所产生的部分解,不一定是可行性的。</p>
+<blockquote>
+<p>错误。一定得是可行的。贪心的每一步: 可行的（满足问题约束），局部最优（当前状态可选项中选择局部最优选项），不可取消（选择后无法撤销回退）</p>
+</blockquote>
+</li>
+<li><p>LasVegas算法只要给出解就是正确的。</p>
+<blockquote>
+<p>正确。这是Las Vegas算法的定义</p>
+</blockquote>
+</li>
+<li><p>一个完全多项式近似方案是一个近似方案 $ \{A_{\epsilon}\} $ ,其中每一个算法 $A_{\epsilon}$ 在输入实例𝐼的规模的多项式时间内运行。</p>
+<blockquote>
+<p>错误。定义里有，FPAS是I规模和$\frac{1}{\epsilon}$两者多项式时间内运行。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="二、问答题"><a href="#二、问答题" class="headerlink" title="二、问答题"></a>二、问答题</h4><ol>
+<li><p>二叉查找树属于 <del>减治</del> 变治策略的三个变种中的哪一个的应用?什么情况下二叉查找树表现 出最差的效率?此时的查找和插入算法的复杂性如何?</p>
+<blockquote>
+<p>改变表现。 插入元素存在顺序，引起二叉查找树退化为长链。最坏、平均均为 O(n)</p>
+</blockquote>
+</li>
+<li><p>何谓为多项式算法?如何将一 Monte Carlo 算法转化为 Las Vegas 算法?</p>
+<blockquote>
+<p>时间复杂度是问题规模n的多项式表达式。利用Monte Carlo算法得到一个结果后对该结果进行正确性验证，正确则算法返回结果，否则没有结果。</p>
+</blockquote>
+</li>
+<li><p>构造 AVL 树和 2-3 数的主要目的是什么?它们各自有什么样的查找和插入的效率?</p>
+<blockquote>
+<p>维持树的平衡性，使得问题规模为n时，树高度h大约为log(n)，降低排序树的最坏查找、插入、删除的时间复杂度。查找，插入均为O(log(n))。</p>
+</blockquote>
+</li>
+<li><p>写出 0/1 背包问题的一个多项式等价(Polynomial Equivalent)的判定问题,并说明为什么它们是多项式等价的。</p>
+<blockquote>
+<p>01背包问题P0：给定集合N={0, 1, 2, …}，每个元素的重量w和价值v。求V，其中$S\subseteq N$，$\sum_{i\in S}{w(i)} \le W$， 且 $ \sum_{i{\in}S} = V $<br>等价判定问题P：给定集合N={0, 1, 2, …}，每个元素的重量w和价值v。问是否存在N的子集S，使得子集中所有元素重量和小于等于W，价值和大于等于V。<br>对于问题P，以及输入N, w, v,  W, V：构造问题P0，输入为N, w, v, W，求出P0的最大价值和V0，与问题P的输入V进行比较即可判定是否存在，即 P 规约到 P0 。<br>对于问题P0，以及输入N, w, v, W。在0和所有元素的价值总和Vmax之间进行二分，每次构造问题P，输入为N, w, v, W, Vi。即可求得P0的解。即 P0 规约到 P。</p>
+</blockquote>
+</li>
+<li><p>下面问题是否属于 NP 问题?为什么?<br>问题表述:给定图𝐺 = (𝑁, 𝐴)中的两个点𝑝、𝑞,整数𝑐和𝑡,图𝐺中每条边的长度𝑐_ij及便<br>利这条边的时间𝑡_ij,问图𝐺中是否存在一条由𝑝到𝑞的路径,使得其长度大于𝑐,且遍历时间 小于𝑡?</p>
+<blockquote>
+<p>把集合划分问题多项式transform到该问题。对于一个n个元素的集合，每个元素的值为s(i)。设所有元素的和为2K。<br>构造一个层次图，图中p到q必须依次经过n-1个点：p1, …, pn-1，p到p1，p1到p2，…， pn-2到pn-1，pn-1到q，各有2条边，一条的长度为s(i)，时间为s(i)，另一条时间为0，长度为0。并设定c=K-1，t=K+1。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="三、分治题"><a href="#三、分治题" class="headerlink" title="三、分治题"></a>三、分治题</h4><ol>
+<li><p>写出一个求解下列问题的分治算法,推导其时间复杂性并与蛮力法相比较。 给定互不相等的n个数的一个序列𝑎!,𝑎!,…,𝑎!,若其中某两个数𝑎!和𝑎!的关系为:𝑎! &gt;𝑎! 且𝑖 &lt; 𝑗,则称𝑎!和𝑎!是逆序的。要求计算该序列中的逆序个数,即具有逆序关系的元素 对的总数目。</p>
+<blockquote>
+<p>归并排序，在合并两个数组的时候进行计数。总逆序数对数等于左半边+右半边+左右之间构成的。（离散化+树状数组也行，不过这里是分治了）<br>T(n) = 2T(n/2) + O(n)。由 <em>master theorem</em> ，T(n) = O(nlog(n))</p>
+</blockquote>
+</li>
+<li><p>A[1, … , 𝑛]为一个整数序列,A中的整数𝑎如果在A中出现次数多余 𝑛/2 ,那么𝑎称为多数 元素。例如,在序列1,3,2,3,3,4,3中 3 是多数元素,因为出现了 4 次,大于 7/2 。求 A 的多数元素问题的蛮力算法复杂性如何?设计一个具有变治思想的算法,提高蛮力算法 的效率,写出伪代码并分析其事件复杂性。</p>
+<blockquote>
+<p>先排序，然后线性扫描。复杂度O(nlogn) + O(n) = O(nlogn)</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="四、动态规划题"><a href="#四、动态规划题" class="headerlink" title="四、动态规划题"></a>四、动态规划题</h4><p>基本都是比较简单的二维dp。</p>
+<h4 id="五、分支限界"><a href="#五、分支限界" class="headerlink" title="五、分支限界"></a>五、分支限界</h4><ul>
+<li>用分支定界法求解以下问题: 某部门欲建立联通分布于五个区的共 50 个站点的有线通讯网络,每两个站点之间的线路敷设费用由对成矩阵 C 给出,任意两站点之间敷设线路需建设的地井数目由对称矩 阵U给出。<br>设计一线路敷设总费用为最小的无环网络,使得徐建设的总地井数目不超过 UMAX, 且需跨区敷设的线路总数目不超过 DMAX(个站点所属的区由向量 D 给出)。<ul>
+<li>说明你是如何构造搜索树的。(要求是二叉搜索树)</li>
+<li>说明算法遍历搜索树的原则。(何时以及如何前进、分支、回溯、剪枝等等)</li>
+<li>你设计的分支定界算法的“界”是什么,他为什么是正确的和有效的?</li>
+<li>写出伪代码。</li>
+</ul>
+</li>
+</ul>
+<p>二叉搜索树还是蛮蛋疼的，一般也就只能是某边是否选之类得了。<br><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1515302333768&amp;di=df7bcd21834081f3afc6d39afea3e3a7&amp;imgtype=0&amp;src=http%3A%2F%2Fe.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fd000baa1cd11728bf3edbe61c3fcc3cec2fd2cb4.jpg" alt="doge"></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2018/01/06/algo-practise/">https://blog.runc.dev/2018/01/06/algo-practise/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2018/05/22/tlsf/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">TLSF 动态内存分配算法</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2017/11/22/return-back/">
+        <span class="next-text nav-default">零碎</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

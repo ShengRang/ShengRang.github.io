@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="后缀自动机入门"/><meta name="keywords" content="算法, 数据结构, 字符串, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2016/04/29/sam/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>后缀自动机入门 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">后缀自动机入门
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-04-29
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#后缀自动机的定义"><span class="toc-text">后缀自动机的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#后缀自动机的建立"><span class="toc-text">后缀自动机的建立</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>后缀自动机是一种接受所有后缀的DFA</p>
+<p><em>寒假刚完后缀数组开始看 SAM , 结果发现这玩意一点也不好学</em></p>
+ <a id="more"></a>
+<p>从一个题讲起:</p>
+<blockquote>
+<p>最近SAM对字符串情有独钟. 给一字符串S, SAM想知道有一些单词是否是这个字符串的子串.<br>SAM觉得这个问题太过简单, 他定义了一种操作. 在字符串S末尾添加字符串c.<br>询问则是给出一个单词, 询问这个单词在当前字符串S中是否出现过(是否为子串)</p>
+<p>abcdef<br>5<br>2 abc<br>2 efg<br>1 g<br>2 efg<br>2 cde</p>
+<p>YES<br>NO<br>YES<br>YES</p>
+</blockquote>
+<p>如果不对字符串进行修改, 显然可以用 <strong>AC自动机</strong> 划水. 把所有询问模式串插入字典树, 建立AC自动机, 然后对文本串<code>O(n)</code>的匹配, 就可以统计出各个模式串是否出现.</p>
+<p><strong>然而有修改, 然而有修改, 然而有修改</strong>. 注意AC自动机本质上是对模式串建立一个快速匹配的自动机(快速匹配原理同<strong>kmp</strong>), 对于长度为n的文本串, 需要O(n)的扫描才能知道是否每个模式串是其子串.</p>
+<p>这个题目却对文本串进行修改, 因此每次都需要<code>O(n)</code>复杂度才能进行判断是否出现.</p>
+<p>如果有一种自动机可以匹配文本串的任意子串呢? 只需要让模式串在这个自动机上转移, 就可以得知是否为文本串的子串.</p>
+<h4 id="后缀自动机的定义"><a href="#后缀自动机的定义" class="headerlink" title="后缀自动机的定义"></a>后缀自动机的定义</h4><p>后缀自动机是一种DFA:</p>
+<p>确定有限状态自动机<img src="https://upload.wikimedia.org/math/8/4/c/84cc21a1ecbbe55e01e12e575a52cca2.png" alt="\mathcal{A}">是由</p>
+<ul>
+<li>一个非空有限的<a href="https://zh.wikipedia.org/wiki/%E7%8A%B6%E6%80%81" target="_blank" rel="noopener">状态</a>集合<img src="https://upload.wikimedia.org/math/f/0/9/f09564c9ca56850d4cd6b3319e541aee.png" alt="Q"></li>
+<li>一个输入<a href="https://zh.wikipedia.org/wiki/%E5%AD%97%E6%AF%8D%E8%A1%A8_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6" target="_blank" rel="noopener">字母表</a>)<img src="https://upload.wikimedia.org/math/a/6/4/a643a0ef5974b64678111d03125054fc.png" alt="\Sigma">（非空有限的字符集合）</li>
+<li>一个转移<a href="https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">函数</a><img src="https://upload.wikimedia.org/math/5/0/9/509af98ac38e7825bc55ba8382925792.png" alt="\delta: Q \times \Sigma \rarr Q">（例如：<img src="https://upload.wikimedia.org/math/c/d/a/cda5efed4184c7043ff96c93d1f9db75.png" alt="\delta \left( q,\sigma \right) = p, \left( p,q \in Q, \sigma \in \Sigma \right)">）</li>
+<li>一个开始状态<img src="https://upload.wikimedia.org/math/a/7/2/a72546923498c1031d2ce49dbab637c5.png" alt="s \in Q"></li>
+<li>一个接受状态的集合<img src="https://upload.wikimedia.org/math/2/e/f/2ef3b9c9ae290bb1868e0a3e1ab6dfdd.png" alt="F \sube Q"></li>
+</ul>
+<p>所组成的5-<a href="https://zh.wikipedia.org/wiki/%E5%A4%9A%E5%85%83%E7%BB%84" target="_blank" rel="noopener">元组</a>。因此一个DFA可以写成这样的形式：<img src="https://upload.wikimedia.org/math/6/6/e/66ed0d42799d66808a4e707e0c1c61d3.png" alt="\mathcal{A} = \left( Q,\Sigma,\delta,s,F \right)">。</p>
+<p>因为这个editor对行内mathjax的公式支持不是很友好. 接下来的记号说明:</p>
+<p><code>SAM(T)</code>, 表示对字符串T建立的后缀自动机.</p>
+<p><code>sigma</code>, 表示字母表(例如全部小写英文字母)</p>
+<p><code>trans</code>, 表示转移函数, <code>trans(p, x) = q</code> 表示自动机上p状态经过字符x的转换到达状态q, <code>trans(p, S) = q</code>(其中S是一个字符串, <code>s0s1s2...sn-1</code>)表示trans…(trans(trans(p, s0), s1), …) = q</p>
+<p><code>init</code>, 表示自动机的初态</p>
+<p><code>end</code>, 表示自动机的终态集合, <code>trans(init, S) in end</code>即字符串S经过初态的转换被自动机接受, 被<code>SAM(T)</code>接受则表示S为T的一个后缀</p>
+<p><code>L(p)</code>, 表示自动机SAM上状态p开始读入字符, 能接受的所有字符串. <code>L(init)</code>即SAM能接受的所有后缀</p>
+<h4 id="后缀自动机的建立"><a href="#后缀自动机的建立" class="headerlink" title="后缀自动机的建立"></a>后缀自动机的建立</h4><ol>
+<li><p>暴力</p>
+<p>最蠢做法, 把<strong>字符串T</strong>的所有后缀插入 <strong>Trie树</strong>, 并建立 <strong>AC自动机</strong>. 在这个 AC自动机 上转移就可以满足需求.</p>
+<p>然而..</p>
+<p>|T| = n, 则空间复杂度为<code>O(n^2)</code>. 选择死亡..</p>
+</li>
+<li><p>分析</p>
+<ol>
+<li><p>显然我们需要一个状态数更少的后缀自动机.</p>
+<p>考虑字符串 T, 其后缀构成的集合为 SFX , 连续子串集合 FAC</p>
+<p>对于任何字符串 S, 如果 <code>S not in FAC</code>, 则 <code>trans(init, S) = null</code> ( S 无论如何转移也不可能变成后缀, 无须浪费空间)</p>
+<p>同时, 如果<code>S in FAC</code>, 则 S 就有成为后缀的可能, 字符串在自动机上的匹配每次消耗一个字符, 进行一次转移, 因此 SAM(T) 需要识别所有子串(而不仅仅是所有后缀)</p>
+</li>
+<li><p>我们不能对每个<code>S in FAC</code>都<strong>新建</strong>一个状态, 因为<code>|FAC|</code>太大.  考虑 <code>trans(init, S)</code> 能识别哪些字符串, 即 <code>L(trans(init, S))</code>. 而 <code>x in L(trans(init, S))</code>  当且仅当 <code>Sx in SFX</code>, 因为我们已经读入 S.</p>
+<p>对于一个状态 p , 我们关心的是 L(p).</p>
+<p>如果 <code>Sa = S[l:r]</code>, 则 <code>trans(init, Sa)</code>开始能识别从 r 开始的后缀.</p>
+<p>例如 Sa 在 S 中出现位置集合为 <code>{[l1, r1), [l2, r2), … [ln, rn)}</code>,</p>
+<p>那么 <code>L(trans(init, Sa)) = {S[r1:], S[r2:], … S[rn:]}</code>. 令 <code>Right(Sa)={r1, r2, …, rn}</code>, 则<code>L(trans(init, Sa))</code>与<code>Right(Sa)</code>等效</p>
+</li>
+<li><p>那么对于两个子串 Sa, Sb. 若<code>Right(Sa)=Right(Sb)</code>, 则<code>L(trans(init, Sa))=L(trans(init, Sb))</code>, 则 <code>trans(init, Sa), trans(init, Sb)</code> 完全可以归入同一个状态</p>
+<p>容易知道 <code>Right(S)</code> 等价的所有 Sx 长度为一个连续的区间.(自己想), 不妨令这个区间为 <code>[Min(S), Max(S)]</code></p>
+<p>考虑两个状态 a, b. 他们表示的 Right 集合为 Ra, Rb. 假设 Ra 与 Rb 有交集, 设 <code>r in Ra &amp; Rb</code>. 状态 a 表示的子串和状态 b 的子串不会有交集(因为 <code>trans(init, Sx)</code> 是一个确定的状态),</p>
+<p>所以 <code>[Min(a), Max(a)]</code> 和 <code>[Min(b), Max(b)]</code> 不会有交集(如果有交集, 则他们存在相同子串, 矛盾). 不妨设<code>Max(a) &lt; Min(b)</code>, 有 a 表示的串均为 b 表示的串的后缀. 因此 Rb 是 Ra 的真子集(clj的ppt好像写反了?)</p>
+<p>那么任意两个状态对应的 Right 集合, 要么不相交, 要么一个是另一个的真子集</p>
+<p><strong>这个性质很重要..</strong> 说明 Right 集合构成一个树形结构, 而且叶子节点至多 N 个, 如果 <code>fa = parent(s)</code>, 则 <code>Max(fa) = Min(s) - 1</code></p>
+<p>叶子节点至多N个, 同时每个节点至少2个孩子, 可以得知这个数的节点数是<code>O(n)</code>的(Why?)</p>
+<p>边数也是<code>O(n)</code>的, 对N个节点建立生成树, 对于不在生成树上的边<code>trans(p, x)=q</code>, 一定存在init-&gt;p, p-&gt;q, q-&gt;终态的路径, 即对应一个确定的后缀. 而字符串的后缀数目是<code>O(n)</code>的, 因此非树边也是<code>O(n)</code>的.</p>
+<p>Right 集合构成的树形结构叫 Parent 树, <code>fa = parent(s)</code>, 则 fa 状态的 Right 集合是包含s状态的 Right 集合的元素最少的集合.</p>
+<p>如果有 <code>trans(x1, c1) = trans(x2, c2)……=trans(xk, ck) = x</code>，则 <code>c1 = c2 …… = ck</code>！且状态 <code>x1, x2, ……xk</code> 在 parent 树中构成一段连续的 Parent 链（即有父子关系）。链的最底部最小的儿子为 xi，当且仅当 <code>step[xi] + 1 = step[x]</code></p>
+</li>
+</ol>
+</li>
+<li><p>构造</p>
+<p>经过上面的分析. 下面给出<strong>在线, 线性</strong>的构造SAM的方法.</p>
+<p>每读入一个字符 x, 更新当前字符串 T 的 SAM(T) 为新字符串 Tx 的SAM(Tx).</p>
+<p>考虑 SAM(T) 和 SAM(Tx) 的差别, 前者可以接受所有T的后缀, 识别所有T的子串, 显然后者能识别的子串除了T的所有子串, 还有Tx的后缀.</p>
+<p>这只是状态转移的合法性, 但是在之前的分析中, 为了压缩状态, 我们将一个状态和 Right 集合对应起来, 并用 Parent 树记录这种 Right 集合的真子集关系.</p>
+<p>因此从 SAM(T) 到 SAM(Tx), 需要保持两种性质</p>
+<ol>
+<li>转移合法性: 接收 Tx 的所有后缀，且保证Tx的所有子串有合法转移( trans 的更新)</li>
+<li>状态法性：每个状态和新增状态的 right 集满足定义，即：转移到同一个状态的所有子串有相同的 Right 集。（涉及 Parent 链的更新）</li>
+</ol>
+<p>对于(1)，因为 Tx 的子串 = T 的所有子串+ Tx 的所有后缀，因此我们只需要保证 Tx 的所有后缀有合法转移就行！而 Tx 的后缀完全是由T的所有后缀增加一个字符 x 得来的，我们只需要挨个找出 T 的后缀在 SAM(T) 中的状态，然后再保证这些状态在 SAM(Tx) 当中有 x 转移, 并转移到终态即可.</p>
+<p>首先增加一个 np 节点.</p>
+<p>如何查找 SAM(T) 对应的终态? (沿着 Parent 树从 <code>Right={|T|}</code> 向上查一条链, 他们都是终态)</p>
+<p>设SAM(T)当中后缀对应的终态=<code>{v1, v2, …….vk}</code>，回溯的时候会出现哪些情况呢？</p>
+<ol>
+<li><code>trans(p, x) = null</code>，即不存在 x 转移，我们就必须增加一个 x 转移 SAM(Tx) 的终点 np 即可，同时保证了性质(2)；</li>
+<li><code>q = trans(p, x) != null</code>很好嘛，已经有 x 转移了，我们只需要保持性质(2)就行。扩充 <code>Right(q)</code>，即把 np 的 parent 的指针链向 q 不就 ok 了嘛！</li>
+</ol>
+<p><strong>然而有错, 然而有错, 然而有错</strong>.</p>
+<p>假设 p 是沿着 parent 链查找时遇到的第一个有 x 转换的节点.那么 p 沿着 parent 链继续向上查找的节点也都有 x 转换(因为在 parent 链上走的过程是 Right 集合增大的过程)</p>
+<p>考虑前面的性质, <code>trans(p, x) = q</code>, 一定存在 <code>p1, p2, …, pm</code> 满足 <code>trans(pi,  x) = q</code>. 并且<code>p1-pm</code> 在 parent 树中为一条链, 假设 p1 为链底端状态, 即 <code>parent(p1) = p2, parent(p2) = p3, …</code></p>
+<p>当<code>p == p1</code>, 好像没有什么不对, 只需要把 np 的 parent 指向 p 即可, 因为 <code>p1, p2, …, pm</code> 都是 SAM(T) 的终态(由于 parent 链)</p>
+<p>当<code>p!=p1</code>, 假设<code>p==pk</code>, 则<code>p1, p2, …, pk-1</code>并非 SAM(T) 的终态. 如果此时只是简单的<code>parent(np) = q</code>, 后果是通过<code>p1, p2, … pk-1</code>经过 x 字符转换到达状态 q, 其实不应该是 Tx 的后缀, 而 q 的 Right 集合里包含了 np 的 Right 集合(这意味着 q 是 SAM(Tx) 的终态). 对于通过 <code>pk, pk+1, …, pm</code> 经过字符x转换达到状态 q 的字符串, 他们又确实是 Tx 的后缀(因为 <code>pk, pk+1, …, pm</code> 是 SAM(T) 的终态, 因此他们本来是T的后缀, 添加字符x之后显然是 Tx 的后缀).</p>
+<p>怎么解决这个问题?</p>
+<p>办法也很简单, pk 将 <code>p1, p2, …, pm</code> 分成了两部分, <code>{p1, …, pk-1}</code> 经过 x 转换之后到达的状态不应该是终态, <code>{pk, …, pm}</code> 经过x转换之后到达的状态应该是终态. 只需要把 q 节点复制, 成为 nq 节点. 对于 <code>{p1, …, pk-1}</code>, 不修改他们, 也不让 <code>parent(np)</code> 指向 q, 而对于 <code>{pk, …, pm}</code>, 让他们经过 x 转换后到达状态 nq , 同时 <code>parent(np)</code> 指向 nq.</p>
+<p>这就构造出了 SAM(Tx).</p>
+<p>复杂度粗略估计是线性的, 因为每次都在添加parent边和trans边, 而最终的自动机中边数是<code>O(n)</code>的.</p>
+</li>
+<li><p>实现代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIGMA_SIZE 26</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXN 20050</span></span><br><span class="line"><span class="keyword">int</span> len;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SAM</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">SNode</span>&#123;</span></span><br><span class="line">        <span class="keyword">int</span> <span class="built_in">step</span>;</span><br><span class="line">        <span class="keyword">int</span> next[SIGMA_SIZE];</span><br><span class="line">        <span class="keyword">int</span> fail;</span><br><span class="line">    &#125;node[MAXN&lt;&lt;<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> scnt, <span class="built_in">end</span>;</span><br><span class="line">    SAM() : scnt(<span class="number">0</span>)&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">        scnt = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">end</span> = newNode(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">newNode</span><span class="params">(<span class="keyword">int</span> <span class="built_in">step</span>)</span></span>&#123;</span><br><span class="line">        node[scnt].<span class="built_in">step</span> = <span class="built_in">step</span>; node[scnt].fail=<span class="number">-1</span>;</span><br><span class="line">        <span class="built_in">memset</span>(node[scnt].next, <span class="number">-1</span>, <span class="keyword">sizeof</span>(node[<span class="number">0</span>].next));</span><br><span class="line">        <span class="keyword">return</span> scnt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> c)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> x = c-<span class="string">'a'</span>;</span><br><span class="line">        <span class="keyword">int</span> p = <span class="built_in">end</span>;</span><br><span class="line">        <span class="keyword">int</span> np = newNode(node[p].<span class="built_in">step</span>+<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">while</span>(p&gt;=<span class="number">0</span> &amp;&amp; node[p].next[x] == <span class="number">-1</span>)</span><br><span class="line">            node[p].next[x] = np, p = node[p].fail;</span><br><span class="line">        <span class="keyword">if</span>(p == <span class="number">-1</span>)</span><br><span class="line">            node[np].fail = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> q = node[p].next[x];</span><br><span class="line">            <span class="keyword">if</span>(node[p].<span class="built_in">step</span>+<span class="number">1</span> == node[q].<span class="built_in">step</span>)</span><br><span class="line">                node[np].fail = q;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">int</span> nq = newNode(node[p].<span class="built_in">step</span>+<span class="number">1</span>);</span><br><span class="line">                <span class="built_in">memcpy</span>(node[nq].next, node[q].next, <span class="keyword">sizeof</span>(node[<span class="number">0</span>].next));</span><br><span class="line">                node[nq].fail = node[q].fail;</span><br><span class="line">                node[q].fail = nq;</span><br><span class="line">                node[np].fail = nq;</span><br><span class="line">                <span class="keyword">while</span>(p&gt;=<span class="number">0</span> &amp;&amp; node[p].next[x] == q)</span><br><span class="line">                    node[p].next[x] = nq, p = node[p].fail;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">end</span> = np;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">build</span><span class="params">(<span class="keyword">char</span> *s)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = <span class="built_in">strlen</span>(s);</span><br><span class="line">        init();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++)</span><br><span class="line">            insert(s[i]);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>其实代码很短..</p>
+<p>​</p>
+<p>​</p>
+</li>
+</ol>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2016/04/29/sam/">https://blog.runc.dev/2016/04/29/sam/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+            <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/07/11/dp-report/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">D（bei）P（bao）专题报告</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2016/04/18/xiaosai/">
+        <span class="next-text nav-default">校赛补题</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

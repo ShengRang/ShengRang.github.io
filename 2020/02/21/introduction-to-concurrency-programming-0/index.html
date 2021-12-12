@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="并发编程基础 - 并发对象和一致性模型"/><meta name="keywords" content="并发编程, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2020/02/21/introduction-to-concurrency-programming-0/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>并发编程基础 - 并发对象和一致性模型 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">并发编程基础 - 并发对象和一致性模型
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-02-21
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#顺序一致性"><span class="toc-text">顺序一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线性一致性"><span class="toc-text">线性一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#演进条件"><span class="toc-text">演进条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后"><span class="toc-text">最后</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>本篇介绍并发对象的基本概念，一致性模型和演进性讨论。</p>
+<a id="more"></a>
+<p><strong>Correct me if I’m wrong.</strong></p>
+<p>本篇的大部分内容来自 <em>The Art of Multiprocessor Programming Revised 1st Edition</em>。</p>
+<p>并发对象的行为可以用 <em>正确性</em> 和 <em>演进性</em> 进行描述。并发对象的正确性是基于某种等价的顺序行为的正确性概念，不同的概念适用于不同的系统。比如，顺序一致性是一种较强的约束限制，通常用于描述类似于硬件存储器接口这样的底层系统，可线性化是一种更强的约束，适用于描述由可线性化组件构成的高层系统。演进性描述一类好的事情最终会发生的性质，也叫活性。比如对锁而言，互斥就是安全性（正确性）特性，而无死锁、无饥饿是活性（演进性）特性。</p>
+<p>在 java, c++ 里，对象可以看做是包含数据的容器，每个对象提供一系列方法，只有通过这些方法对对象进行操作。顺序程序的正确性用霍尔逻辑就能很好的描述，大概就是给每个方法加上前后置条件，这也是形式化验证做正确性保证的思路。在顺序执行的情况下，每个方法都可以用霍尔逻辑表达它的 <em>顺序规范</em>。而并发对象可能会处在某种方法调用发生到调用响应之间的中间状态。</p>
+<h3 id="顺序一致性"><a href="#顺序一致性" class="headerlink" title="顺序一致性"></a>顺序一致性</h3><p>方法调用是需要时间的，方法调用可以看做一段时间间隔，从 <em>调用(invocation)</em> 事件开始，直到 <em>响应(response)</em> 事件结束。如果一个方法调用的 <em>调用</em> 事件发生，对应的响应还没发生，那么当前这个方法调用是 <em>未决(pending)</em> 的。</p>
+<p>由于历史原因，一个可进行读写操作的内存位置上的对象叫做寄存器。如果两个线程 A, B 并发地向共享寄存器 r 写入 -3 和 7，初始值为0。一段时间以后，一个线程读 r 结果返回了 -7，这显然是很诡异，不可接受的。我们希望读出来的要么是 -3，要么是 7，而不是 -7 这种凭空产生的值。这就导出了下面这条原则：</p>
+<blockquote>
+<p>Principle 3.3.1. Method calls should appear to happen in a one-at-a-time, sequential order.</p>
+</blockquote>
+<p>这条原则说的是，方法调用从结果上看，应该表现为依次、顺序地发生。这里的顺序是一种全局的全序关系，所有线程可见。</p>
+<p>考虑单线程进行操作，r.write(7), r.write(-3), r.read(7)，这也是一种诡异的表现，因为这个线程发生的内存访问顺序违背了程序的顺序执行。这个例子引出了另一条原则：</p>
+<blockquote>
+<p>Principle 3.4.1. Method calls should appear to take effect in program order.</p>
+</blockquote>
+<p>这条原则说的是，方法调用不应该违背程序次序，程序次序就是代码编写时候的先后顺序。原则 3.3.1 和 3.4.1 一起定义了一种正确性特性，称为 <em>顺序一致性</em>。</p>
+<p>Lamport 对 <em>顺序一致性</em> 的定义：</p>
+<blockquote>
+<p>A multiprocessor is sequentially consistent if the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program.</p>
+</blockquote>
+<p>顺序一致性要求方法调用的执行行为具有按照 <strong>某种</strong> 顺序次序执行的效果，并且这种顺序执行的次序不违背程序次序。就是说任意的并发执行中，都存在着一种全序关系，这个全序关系 1. 不违背程序次序，2. 不违背对象的 <em>顺序规范(顺序执行的时候满足的形式化规约，比如队列是 FIFO 的)</em> 。</p>
+<p>来看一个满足顺序一致性却违背线性一致性的例子：</p>
+<p><img src="fig3_7.png" alt=""></p>
+<p>注意到在真实时间线上， <code>q.enq(x)</code> 先入队x，且先发生于 <code>q.deq(y)</code>。通过 <strong>真实时间</strong> 可以知道，<code>q.enq(x)</code> 也先发生于 <code>q.enq(y)</code>。最终观测到 <code>q.deq(y)</code> 了 <code>q.deq(y)</code> 其实说明 y 比 x 先入队，然而这并不违背顺序一致性，因为在顺序一致性的定义里并没有要求不同线程之间存在同步关系，不考虑全局时钟，无需感知到 <code>q.enq(x)</code> 也先发生于 <code>q.enq(y)</code> 这组先发生关系。此时，全序关系为 <code>q.enq(y) --&gt; q.enq(x) --&gt; q.deq(y)</code>。此全序关系不违背两个线程各自的程序次序，且不违背队列 q 的 FIFO 性质。</p>
+<p>现代多处理器系统结构中，内存的读写都不是顺序一致的，这些读写操作可以复杂地进行重排序。大多数时候无法察觉，因为大部分的读写操作并不是作为同步操作使用的(线程互相之间不感知，因为没有观察)。在那些程序员需要顺序一致性的特殊情况下，必须显式写代码申请，一般 cpu 都会提供一些特殊指令 (memory fence, memory barrier)，控制处理器按照需求控制内存读写顺序，实现顺序一致性。</p>
+<p>顺序一致性是无法复合的，多个顺序一致的对象组合在一起的整体未必是顺序一致的：<br><img src="fig3_8.png" alt=""></p>
+<p>单独看 p, q 的行为，都是不违背顺序一致性，然而不存在合适的执行序列使得 A, B 不违背自己的程序次序。<br>假设存在这样的全序</p>
+<blockquote>
+<p>因为 <code>&lt;p.deq(y) A&gt;</code>，p 是FIFO，所以 <code>&lt;p.enq(y) B&gt; —&gt; &lt;p.enq(x) A&gt; —&gt; &lt;p.deq(y) A&gt;</code><br>同理， <code>&lt;q.enq(x) A&gt; —&gt; &lt;q.enq(y) B&gt; —&gt; &lt;q.deq(x) B&gt;</code><br>在A中， <code>&lt;p.enq(x) A&gt; —&gt; &lt;q.enq(x) A&gt;</code><br>在B中， <code>&lt;q.enq(y) B&gt; —&gt; &lt;p.enq(y) B&gt;</code><br>所以有 <code>&lt;p.enq(y) B&gt; —&gt; &lt;p.enq(x) A&gt; —&gt; &lt;q.enq(x) A&gt; —&gt; &lt;q.enq(y) B&gt; —&gt; &lt;p.enq(y) B&gt;</code>. 出现了环，矛盾。</p>
+</blockquote>
+<h3 id="线性一致性"><a href="#线性一致性" class="headerlink" title="线性一致性"></a>线性一致性</h3><p><del>线性一致性也是分布式经典老番了。</del>顺序一致性不能复合，下面搞点更强的模型。顺序一致性要求方法调用不违背程序次序，用更强的约束条件替换这个要求：</p>
+<blockquote>
+<p>Principle 3.5.1. Each method call should appear to take effect instantaneously at some moment between its invocation and response.</p>
+</blockquote>
+<p>这个原则描述了线性一致性，就是每个方法调用看起来都在它的开始与结束时间中间的某个时间点，原子地完成。非形式化地看，如果并发对象的每次方法调用都可以看做具有与其被调用和响应之间的某个时刻的行为相同的瞬时效果，那么这个并发对象是可线性化的。和顺序一致性类似，也是有一个全局的全序关系，不过这次这个全序关系还和全局时钟有关（在分布式系统里全局时钟是个难题，但是我们可以在讨论性质的时候假设其存在）。</p>
+<p>这个理解基本够用了，DDIA 里也大概是这样讲解。下面要<del>整活，</del>讲解形式化定义。</p>
+<p>并发系统的一次执行过程可以用 <em>经历(history)</em> 模型来描述，经历是方法的 调用事件 和 响应事件 的有限序列。子经历就是 H 事件序列的子序列。</p>
+<ul>
+<li>方法的一次调用是 <code>&lt;x.m(a*) A&gt;</code>, x 是对象，m 是方法名，a* 是参数表，A是线程。</li>
+<li>方法的一次响应是 <code>&lt;x: t(r*) A&gt;</code>, x 是对象，t 是 Ok 或者异常名， r* 是返回值，A 是线程。</li>
+</ul>
+<p>如果一次调用和一次响应具有相同的对象和线程，那么他们是 <strong>匹配</strong> 的。给出方法调用的形式化定义，经历 H 中的一个方法调用是一个二元组，它由 H 中的一个调用和其后第一个且与之匹配的响应构成。在 H 中，如果一个调用没有对应匹配的响应，那么这个调用是未决的 (pending)。</p>
+<p>H 的一个 <strong>扩展(extension)</strong> 是这样的一个经历：对 H 中的0或多个未决调用增加了匹配的响应后构成的经历。有时候可以忽略所有未决调用：$complete(H)$ 是指由 H 中所有<strong>匹配</strong> 的调用和响应构成的 H 的子序列。</p>
+<p>在有些经历中，方法调用相互之间不重叠，如果 H 中的第一个事件是调用事件，除了最后一个事件外， H 中的每个调用都紧随一个与之匹配的响应，则 H 是 <strong>顺序</strong> 的。(最后一个可以是 pending 的 invocation)。</p>
+<p>有时候只需要关心单一线程或者对象。H|x 就是 H 中与对象 x 相关的子序列。H|A 是 H 中与 线程 A 相关的子序列。如果对于任意线程 A，<code>H1|A=H2|A</code> 则 H1 与 H2  <strong>等价</strong>。</p>
+<p>如果 H 中每个线程的子经历都是顺序的，那么 H 是良构 (well formed )的。良构其实就是对每个单一线程来看，方法的调用是顺序发生的，一个方法调用响应前，不会发生其他方法调用。注意，一个 well formed 的 H，每个子线程都是顺序的，但是每个对象未必，因为多线程交织并发地执行。</p>
+<p>合法是对顺序经历而言的，如果每个对象的子经历对该对象而言符合其 <em>顺序规范</em> (比如队列要满足FIFO)，则顺序经历 H 是合法的。</p>
+<p>在经历 H 中，如果 m0 的响应事件在 m1 的调用事件之前发生，则 m0 先发生与 m1。</p>
+<blockquote>
+<p>Deﬁnition 3.6.1. A history H is <strong>linearizable</strong> if it has an extension H’ and there is a legal sequential history S such that<br>L1. complete(H’) is equivalent to S, and<br>L2. if method call m0 precedes method call m1 in H, then the same is true in S.<br>We refer to S as a linearization of H. (H may have multiple linearizations.)</p>
+</blockquote>
+<p>翻译一下就是，经历 H 存在一个扩展 H’，构造出一个合法的顺序经历 S：</p>
+<ul>
+<li>满足 complete(H’) 等价于 S，也就是这俩在每个线程里看，每个事件发生顺序相同。</li>
+<li>如果在经历 H 里，m0 先发生于 m1，那么在 S 里，m0 先发生于 m1。<br>H 是可线性化的 S 就是 H 的一个线性化 (H可以有多个线性化)。</li>
+</ul>
+<p>可线性化是可复合的</p>
+<blockquote>
+<p>Theorem 3.6.1. H is linearizable if, and only if, for each object x, H|x is linearizable.</p>
+</blockquote>
+<h3 id="演进条件"><a href="#演进条件" class="headerlink" title="演进条件"></a>演进条件</h3><blockquote>
+<p>A method is <strong>wait-free</strong> if it guarantees that every call ﬁnishes its execution in a ﬁnite number of steps.<br>A method is <strong>lock-free</strong> if it guarantees that inﬁnitely often some method call ﬁnishes in a ﬁnite number of steps.</p>
+</blockquote>
+<p>如果一个线程的意外延迟会阻碍其他线程继续推进，这样的实现成为阻塞。如果每一次方法调用，都能保证在有限步内完成，这个方法是无等待的。如果无限次方法调用，能确保其中存在部分方法调用能够在有限步完成，那么这个方法是无锁的。相比之下，前面说的 “阻塞” 的实现就可以称作是基于锁的，这里的锁未必是导致线程进入阻塞状态的阻塞锁，也可以是自旋锁。最开始看到无锁编程的算法也会觉得很奇怪，明明拿 CAS 之类的原子操作做了类似于自旋的动作，为什么认为这是无锁的。关键在于是否存在一个（持有互斥锁的）线程，如果该线程的意外延迟（比如错误的锁实现或者操作系统出错导致这个线程意外阻塞却没有释放锁）会阻碍其他线程继续推进，那么这个算法其实是基于锁的。而无锁的算法却可以保证其中至少存在一个线程获得了进展。以队列举例，有 n 个并发线程入队。如果是一个基于锁的算法，那么最终一定是持有锁的线程进行队列数据结构的修改，入队一个元素，然而假设这个线程意外地被抢占，锁没有释放，就会导致该线程没有成功入队数据，其他线程其实是有机会入队的，却因为没有获得锁必须等待。无锁队列却可以保证这 n 个并发线程中，不会因为某个线程的意外延迟导致大家都失败，总体上一定是会有进展的，如果存在线程没有意外延迟，那么一定存在某个线程成功地入队了元素。无等待的要求更苛刻一些，举个例子，每个线程都对一个计数器执行 <code>+1</code> 操作，那么通过原子自增操作可以很简单地做到，每次方法调用都能成功地对计数器 +1，每个线程都取得了进展。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>对于一个应用而言，怎样选择演进性条件是取决于需求的。比如频繁调用的实时方法，能做成无等待当然更好了。正确性的选择也取决于需求，比如银行服务器得确保按照程序次序来执行客户请求，这至少得是个顺序一致性吧。股票交易服务器必须是公平的，按照不同顾客到达的先后次序进行服务，所以这需要一个可线性化的队列。</p>
+<p>对程序员来说，当然是期望有可线性化且性能良好的硬件和数据结构，然而技术总是不完善的。现代硬件甚至不能保证顺序一致性。具有良好性能且可线性化的数据结构的实现可能性也未可知。所以说并发编程存在很多挑战，学习这个也是很有价值的。</p>
+<p>参考资料:</p>
+<ol>
+<li>The Art of Multiprocessor Programming Revised 1st Edition</li>
+<li>Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems</li>
+</ol>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2020/02/21/introduction-to-concurrency-programming-0/">https://blog.runc.dev/2020/02/21/introduction-to-concurrency-programming-0/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2020/02/22/introduction-to-concurrency-programming-1/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">并发编程基础 - 重排序和屏障</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2020/02/20/piecemeal-0/">
+        <span class="next-text nav-default">零碎</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

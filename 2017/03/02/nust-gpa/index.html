@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Vue/Tornado 在 NUST-GPA 的实践及演进"/><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2017/03/02/nust-gpa/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Vue/Tornado 在 NUST-GPA 的实践及演进 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Vue/Tornado 在 NUST-GPA 的实践及演进
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-02
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#项目地址"><span class="toc-text">项目地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最初版本和免验证码"><span class="toc-text">最初版本和免验证码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VueJS-和-Webpack-的引入和前后端分离"><span class="toc-text">VueJS 和 Webpack 的引入和前后端分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端-IO-性能优化"><span class="toc-text">服务端 IO 性能优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>NUST-GPA 是一个快速查询 GPA 并自定义计算 GPA 的小网站。本文对 NUST-GPA 项目做了简单介绍和分析。由于毕业后不再维护，做一点技术分享。<br><a id="more"></a><br>这个项目的缘起是16年初选课的时候教务处崩了，当时觉得新版教务处查成绩很不方便，并且没有GPA的显示。于是在教务处崩坏的那个上午写了个查成绩、计算 GPA 的小网站。</p>
+<p>之前只开源过后端的代码，前端代码非常的丑所以一直没脸公开。想着就要毕业了，还是改一改然后把代码留下来，再写一篇文章简单介绍一下相关的技术，可供他人参考。</p>
+<p>这只是一个小网站，而且是抽空偶尔进行维护，比较挫的地方还是挺多的，轻喷。</p>
+<h3 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h3><p>前端：<a href="https://github.com/ShengRang/nust-gpa-frontend" target="_blank" rel="noopener">https://github.com/ShengRang/nust-gpa-frontend</a><br>后端：<a href="https://github.com/NUST-MSC/NUST-API" target="_blank" rel="noopener">https://github.com/NUST-MSC/NUST-API</a></p>
+<h3 id="最初版本和免验证码"><a href="#最初版本和免验证码" class="headerlink" title="最初版本和免验证码"></a>最初版本和免验证码</h3><p>16 年 1 月 24 创建的项目，由于各种原因，第一版其实就是各种糙快猛的一个东西。为了赶紧上线到 coding 平台，一个多小时就从无到有写了出来。初版完全依赖 tornado ，使用 tornado 做 Web Server 在 PAAS 上部署，使用 tornado 做 Web Framework。依赖 tornado 的模板渲染。</p>
+<blockquote>
+<p><a href="http://www.tornadoweb.org/en/stable/" target="_blank" rel="noopener">Tornado</a> 是一个Python web框架和异步网络库，起初由 FriendFeed 开发. 通过使用非阻塞网络I/O， Tornado可以支撑上万级的连接，处理 长连接, WebSockets ，和其他需要与每个用户保持长久连接的应用.</p>
+</blockquote>
+<p>选择 tornado 主要是因为当初的设想只是写个很轻的网站，不需要引入太重的 web 框架，并且最好部署起来非常容易。 tornado 的 Web 框架总体来说小而简，并且自身就是一个高性能的 Web Server。非常符合当时的需求。</p>
+<blockquote>
+<p>关于验证码的避免：登录之后再登出，接着再次登录的时候，会使用入口 <code>/njlgdx/xk/Verifyservlet</code>，抓取请求会发现此处进行帐号、密码、验证码的验证，正确则返回一个 302 跳转，指向 <code>/njlgdx/xk/LoginToXk?method=verify&amp;USERNAME=用户名&amp;PASSWORD=密码的md5的upper</code>，然后才 302 跳转到登录后界面。因此只需要直接请求一下第二个 url 就能绕过验证码验证。（我也不知道教务处为什么开发了这样一个清奇的登录验证）<img src="https://ww4.sinaimg.cn/large/006tKfTcgy1fdi1cwvx8pj303m03cq2q.jpg" alt="jgz"></p>
+</blockquote>
+<p>当时的项目结构：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">├── Procfile          <span class="comment"># 用于部署在 paas 上, 启动server的命令</span></span><br><span class="line">├── README.md</span><br><span class="line">├── main.py           <span class="comment"># 启动web</span></span><br><span class="line">├── requirements.txt  <span class="comment"># 包依赖</span></span><br><span class="line">├── templates         <span class="comment"># 两个模板页面, 一个登录页, 一个成绩查看页</span></span><br><span class="line">│   ├── gpa.html</span><br><span class="line">│   └── login.html</span><br></pre></td></tr></table></figure><br>当时的主要后端代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScoreHandlers</span><span class="params">(tornado.web.RequestHandler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self)</span>:</span></span><br><span class="line">        user, pwd = map(self.get_argument, [<span class="string">'user'</span>, <span class="string">'pwd'</span>])</span><br><span class="line">        http = login_session(user, pwd)</span><br><span class="line">        score_page = http.get(jwc_domain + <span class="string">'/njlgdx/kscj/cjcx_list'</span>)</span><br><span class="line">        soup = BeautifulSoup(score_page.text)</span><br><span class="line">        <span class="comment"># 省略一些数据的提取...</span></span><br><span class="line">        self.render(<span class="string">'gpa.html'</span>, scores=res, info=info)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.render(<span class="string">'login.html'</span>)</span><br></pre></td></tr></table></figure><br>前端就更不得了了：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span></span><br><span class="line">    欢迎使用 NUST GPA</span><br><span class="line"><span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"/"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">placeholder</span>=<span class="string">"学号"</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"user"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">placeholder</span>=<span class="string">"密码"</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"pwd"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;</span>查看<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure><br>登录主要就是个表单。查看成绩界面主要就是个 table ，里面用 tornado 模板的循环语法对成绩进行渲染。</p>
+<p>总结：访问网站时会调用 handler 的 get 方法，渲染出登录页面。用户输入帐号密码后，发送 POST 请求到 post 方法，获得了参数中的帐号密码，后端使用 requests 发起请求，登录并查询成绩，得到的内容经过 beautifulsoup 进行解析，提取出结构化的成绩数据，最终通过 gpa.html 的模板渲染出成绩页面。</p>
+<h3 id="VueJS-和-Webpack-的引入和前后端分离"><a href="#VueJS-和-Webpack-的引入和前后端分离" class="headerlink" title="VueJS 和 Webpack 的引入和前后端分离"></a>VueJS 和 Webpack 的引入和前后端分离</h3><p>初版 NUST-GPA 只是登录、查询成绩。仍然没有解决新版教务处不支持查询绩点的蛋疼之处。初版上线之后一段时间，16年2月进行了一些开发，在项目中引入了 VueJS 和 Webpack，逐渐开始尝试前后端分离。</p>
+<p>计算 GPA 只要读取每个学期的成绩，依照学生手册上的 GPA 计算规则进行计算即可。比较麻烦的是存在不同类别的 GPA，比如毕业资格审查、出国、保研，对一些成绩的选取规则不同（例如只算第一次或取最高成绩），并且教务处新旧交替的那个学期，专业选修课和公共选修课很难直接区别。于是想了种比较折衷的办法，每项成绩可以选择是否纳入 GPA 计算，程序开始就自动对课程做一些是否纳入计算的识别（比如缓考不纳入，公共选修课不纳入），这样用户可以比较方便的查v自己需求的 GPA，在自动识别基础上自己再修改一些课程是否纳入计算即可。</p>
+<p><img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fdhj27r7kbg30dt0fkdjf.gif" alt="gpa"></p>
+<p>这个功能如果据需沿用之前的模式，后端获取数据之后利用模板来展现数据（在最终的 HTML 里进行表现），这时引入一些逻辑就需要写一些js，读取 DOM，获得数据，然后监听一些事件，执行相应的计算，一般会引入 jQuery。</p>
+<p>一般用 jQuery 做一些小功能，操作 DOM 还是挺方便的，但是整个逻辑用 jQuery 进行 DOM 操作，开发比较麻烦。尤其是这里的需求。原始数据经过模板引擎渲染到 HTML 里，前端又用奇怪的方式把数据取出，然后做一系列操作。前后端分离的引入更利于解耦，也更加自然。</p>
+<p>前后端分离一般不再依赖后端的模板，前端只是一些静态页面，使用 AJAX/JSONP 之类的方式请求后端数据（ REST/SOAP）。前端也不再直接操作 DOM，而是引入React、Vue、Angular之类 MV* 的 lib 或者 framework 以组件化的方式构建 UI。后端则纯粹以 API（REST/SOAP） 的形式提供数据。</p>
+<p>如前，NUST-GPA 只是个小站，也没啥开发力量，纯粹高兴就写几行代码。选取了 <a href="http://cn.vuejs.org/" target="_blank" rel="noopener">Vue</a> 做前端库，并且使用 <a href="https://webpack.github.io/docs/" target="_blank" rel="noopener">Webpack</a> 进行构建。使用 Webpack 构建（而不是在 HTML 里直接嵌入Vue），以 <code>*.vue</code> 格式编写组件，主要是让前端更加工程化、模块化。</p>
+<blockquote>
+<p>注：最开始尝试的时候虽然引入了 Webpack，但还是没有将前端后端完全分离，当时的做法是 Webpack build 出的 dist 用 tornado 作为静态资源处理，配置 Webpack 时使用 <a href="https://www.npmjs.com/package/assets-webpack-plugin" target="_blank" rel="noopener">assets-webpack-plugin</a> 插件生成打包后的 dist 文件名，tornado 对这个文件进行读取，渲染模板时加载对应的 dist。使用这种做法的主要原因是当时 NUST-GPA 部署在一个不能同时支持 Webpack 构建和 Python 的限制较多的小型平台上，推送代码时只能把 dist 一并推送。</p>
+</blockquote>
+<p>最初基于 Vue 的前端大概结构：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">├── package.json        <span class="comment"># npm 包依赖</span></span><br><span class="line">├── build               <span class="comment"># build 配置 </span></span><br><span class="line">│   ├── build.js        <span class="comment"># 生产</span></span><br><span class="line">│   ├── watch.js        <span class="comment"># 开发</span></span><br><span class="line">│   ├── webpack.base.conf.js    <span class="comment"># 这三份都是配置</span></span><br><span class="line">│   ├── webpack.dev.conf.js</span><br><span class="line">│   └── webpack.prod.conf.js</span><br><span class="line">├── vue         <span class="comment"># 两个模板页面, 一个登录页, 一个成绩查看页</span></span><br><span class="line">│   ├── main.js         <span class="comment"># 入口, 引用 vue 等,定义路由,挂载根组件</span></span><br><span class="line">│   └── components      <span class="comment"># 一些组件</span></span><br><span class="line">│       ├── about.vue</span><br><span class="line">│       ├── gpa.vue</span><br><span class="line">│       ├── login.vue</span><br><span class="line">│       └── termGPA.vue</span><br></pre></td></tr></table></figure><br>第一次在 NUST-GPA 里写前后端分离的时候 Vue2.0 还没发布，Vuex 也没有成为标配，因此没有 vuex。后来一次重构中引入了 <a href="https://vuex.vuejs.org/" target="_blank" rel="noopener">vuex</a> ，对状态更好的管理。</p>
+<p>最终的前端结构：<a href="https://github.com/ShengRang/nust-gpa-frontend" target="_blank" rel="noopener">nust-gpa-frontend</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">├── index.html</span><br><span class="line">├── package.json</span><br><span class="line">├── src</span><br><span class="line">│   ├── App.vue</span><br><span class="line">│   ├── assets</span><br><span class="line">│   │   ├── icons.png</span><br><span class="line">│   │   ├── logo.png</span><br><span class="line">│   │   └── menu.png</span><br><span class="line">│   ├── compontents</span><br><span class="line">│   │   ├── about.vue</span><br><span class="line">│   │   ├── courseSystem.vue</span><br><span class="line">│   │   ├── exam.vue</span><br><span class="line">│   │   ├── gpa.vue</span><br><span class="line">│   │   ├── login.vue</span><br><span class="line">│   │   └── termGpa.vue</span><br><span class="line">│   ├── config.js</span><br><span class="line">│   ├── css</span><br><span class="line">│   │   └── page.css</span><br><span class="line">│   ├── js</span><br><span class="line">│   │   ├── hm.js</span><br><span class="line">│   │   └── page.js</span><br><span class="line">│   ├── main.js</span><br><span class="line">│   ├── router.js</span><br><span class="line">│   └── store</span><br><span class="line">│       ├── actions.js</span><br><span class="line">│       ├── getters.js</span><br><span class="line">│       ├── index.js</span><br><span class="line">│       └── mutations.js</span><br><span class="line">└── webpack.config.js</span><br></pre></td></tr></table></figure></p>
+<h3 id="服务端-IO-性能优化"><a href="#服务端-IO-性能优化" class="headerlink" title="服务端 IO 性能优化"></a>服务端 IO 性能优化</h3><p>仔细看之前的 ScoreHandler 会发现，requests在请求的时候其实是阻塞的，而应用跑在单进程单线程里，此时主线程会被阻塞。也就是说在执行请求教务处（先登录、再抓成绩页面）这样比较费时的操作时，整个网站是无法响应状态。当初图快，也没想会有人用，所以完全没有考虑 IO 的问题，正经网站这样肯定是不行的。一般解决这种问题会采用多线程或者IO multiplexing。</p>
+<ol>
+<li><strong>多线程</strong><br>用 tornado 的 <a href="http://www.tornadoweb.org/en/stable/concurrent.html" target="_blank" rel="noopener">run_on_executor</a> 非常方便，提供一个 ThreadPoolExecutor 即可。</li>
+<li><strong>IO multiplexing</strong> Tornado 实现的时候根据平台使用了 epoll、kqueue 这类高性能的 IO multiplexing 调用。大致思路是需要请求时，构造非阻塞的 socket 并在 Tornado 的 ioloop 里注册，当数据可读的时候再继续处理请求。当然 Tornado 提供了尚可接受的 <a href="http://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient" target="_blank" rel="noopener">AsyncHTTPClient</a>，在这基础上编程比 requests 复杂一些。</li>
+</ol>
+<p>NUST-GPA 当时运行在内存计费的平台上，由于投在这上面没啥钱，只能用的起 64MB 内存。于是多线程一路走好，而且 AsyncHTTPClient 相较 requests 封装程度较低，可以再做一些改进。</p>
+<p>具体代码就不贴了，手工维护一下 cookie ，把登录之后的 cookie 做一下记录然后请求数据的时候带上 cookie 即可。注意到每次查询都重新登录一次其实是一种浪费，因为 cookie 并不是一次性的，而且 NUST-GPA 只查成绩，NUST-API 的目标却是为其他开发者提供较为便利的 API。因此对于某个用户的登录 cookie，可以在服务端进行缓存，从而减少一次请求次数（教务处设置似乎没有设置session失效，因此缓存成功率几乎是100%）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tornado.util <span class="keyword">import</span> Configurable</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span><span class="params">(Configurable)</span>:</span></span><br><span class="line">    <span class="string">""" 缓存部分数据的缓存. 例如用来维护登录的 Session, 避免一次登录请求</span></span><br><span class="line"><span class="string">    可以实现使用内存的缓存(MemCache), 基于Redis的缓存(TODO)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">configurable_base</span><span class="params">(cls)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> Cache</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">configurable_default</span><span class="params">(cls)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> MemCache</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initialize</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, key)</span>:</span></span><br><span class="line">        <span class="string">""" 依据 key 获取内容</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set</span><span class="params">(self, key, value)</span>:</span></span><br><span class="line">        <span class="string">""" 设置 key 对应值为value</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">(self, key)</span>:</span></span><br><span class="line">        <span class="string">""" 使 key 失效</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError()</span><br></pre></td></tr></table></figure>
+<p>目前实现和使用的缓存就是简单粗暴的内存缓存，其实可以实现基于 redis 的缓存，并且根据环境自动选择（Configurable，存在 redis 服务则使用 redis，否则使用内存）。</p>
+<p>维护用户登录 cookie 的key的选取：线上使用的是用户名+密码做key，实际上可以直接采用用户名，因为教务处即使修改了密码，session也不会失效（当然正常起见还是使用用户名+密码的hash）。</p>
+<p>注意，Cache 并不只是用来缓存用户登录 cookie，也可以用来缓存例如当前学期、课程体系数据。查询考试、课表的时候会涉及到当前学期的选择，每次获取当前学期需要一次多余的请求，只需要在缓存初始化的时候请求一次，并且用 <em>年份+月份</em> 作为 key 对结果进行缓存，这样确保了每月更新。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>一开始可能会有人好奇为啥后端叫 NUST-API，而前端叫 NUST-GPA。这要从历史讲起，最初 NUST-GPA 是个查成绩网站，前后端分离之后发现后端完全可以做成一个完整的学校各种网站的 API 集合（不仅仅是教务处，还可以有图书馆等），而 NUST-GPA 只需要是一个依赖 NUST-API 的纯前端项目即可，其他人可以用 NUST-API 开发 iOS 版的南理工小助手，NUST-GPA的 APP 等等。这也是最初前后端分离的意义之一。</p>
+<p>btw，其实比较期待苹果支持 PWA，这样 iOS 用户体验会更接近native app。然而最近苹果给 JSPatch 一发警告，估计比较艰难了。</p>
+<p>感觉有的地方说的太细，有的地方又没有说到。Talk is cheap，看代码吧。</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2017/03/02/nust-gpa/">https://blog.runc.dev/2017/03/02/nust-gpa/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/2017/11/22/return-back/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">零碎</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2016/11/02/Y-Combinator/">
+        <span class="next-text nav-default">Build of the Y Combinator</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

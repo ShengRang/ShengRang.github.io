@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="State Monad"/><meta name="keywords" content="函数式编程, 形式化, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2018/09/12/state-monad/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>State Monad - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">State Monad
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-09-12
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>这并不是 monad 教学。</p>
+<p>最近在用 <strong>Isabelle</strong> 写 spaceos 的一些验证，打算用 <a href="https://github.com/seL4/l4v" target="_blank" rel="noopener">seL4/l4v</a> 里的 <strong>StateMonad</strong> 简化代码。<br> <a id="more"></a></p>
+<p>seL4 这帮人写了一堆各种各样的 <strong>StateMonad</strong> ，然后还做了一套类似于命令式编程的 syntax，有点像 <strong>Haskell</strong> 里的 <code>do</code>。并且为这个 <strong>StateMonad</strong> 做了一套证明方法、一些lemma，高科技无人驾驶。虽然看起来挺好用的，但是他们也只是自己用用，没具体写文档教咋用… 注释里各种 from Haskell-Like sth。没办法，还是老老实实补一下 <strong>Haskell</strong>。</p>
+<p>粗略过了一下 Haskell，很多地方和 Isabelle 还是比较像的，比如 class、科里化参数、infix等<del>(感觉 Isabelle 就像是有一堆毛病的升级版 Haskell)</del>。依次过一下 Functor，applicative 函子，monoid，monad。这里不扯 IO 什么的，感觉并没有啥太大的关系。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Functor</span> f <span class="keyword">where</span></span></span><br><span class="line">	fmap :: (a-&gt;b) -&gt; f a -&gt; f b</span><br><span class="line">	(&lt;$) :: a -&gt; f b -&gt; f a</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> (<span class="type">Functor</span> <span class="title">f</span>) =&gt; (<span class="type">Applicative</span> <span class="title">f</span>) <span class="keyword">where</span></span></span><br><span class="line">	pure :: a -&gt; f a</span><br><span class="line">	(&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Monoid</span> m <span class="keyword">where</span></span></span><br><span class="line">	mempty :: m</span><br><span class="line">	mappend :: m -&gt; m -&gt; m</span><br><span class="line">	mconcat :: [m] -&gt; m</span><br><span class="line">	mconcat = foldr mappend mempty</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Monad</span> m <span class="keyword">where</span></span></span><br><span class="line">	(&gt;&gt;=)  :: m a -&gt; (  a -&gt; m b) -&gt; m b</span><br><span class="line">	(&gt;&gt;)   :: m a -&gt;  m b         -&gt; m b</span><br><span class="line">	return ::   a                 -&gt; m a</span><br><span class="line">	fail   :: <span class="type">String</span> -&gt; m a</span><br></pre></td></tr></table></figure>
+<p>需要满足一些 Laws:</p>
+<p>Functor Laws:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">fmap</span> id = id</span><br><span class="line"><span class="title">fmap</span> (f . g)  ==  fmap f . fmap g</span><br></pre></td></tr></table></figure></p>
+<p>Applicative functor laws:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pure</span> id &lt;*&gt; v = v</span><br><span class="line"><span class="title">pure</span> (.) &lt;*&gt; u &lt;*&gt; v &lt;*&gt; w = u &lt;*&gt; (v &lt;*&gt; w)</span><br><span class="line"><span class="title">pure</span> f &lt;*&gt; pure x = pure (f x)</span><br><span class="line"><span class="title">u</span> &lt;*&gt; pure y = pure ($ y) &lt;*&gt; u</span><br></pre></td></tr></table></figure></p>
+<p>Monoid Laws:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">mempty</span> `mappend` x = x</span><br><span class="line"><span class="title">x</span> `mappend` mempty = x</span><br><span class="line">(x `mappend` y) `mappend` z = x `mappend` (y `mappend` z)</span><br></pre></td></tr></table></figure></p>
+<p>Monad Laws:<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">return</span> x &gt;&gt;= f = f x</span><br><span class="line"><span class="title">m</span> &gt;&gt;= return = m</span><br><span class="line">(m &gt;&gt;= f) &gt;&gt;= g = m &gt;&gt;= (\x -&gt; f x &gt;&gt;= g)</span><br></pre></td></tr></table></figure></p>
+<p>以上，估计我也没有完全理解。下面看一下 <strong>Isabelle/HOL</strong> 的 <a href="https://isabelle.in.tum.de/library/HOL/HOL-Library/State_Monad.html" target="_blank" rel="noopener">State_Monad</a> 和 <a href="https://github.com/seL4/l4v" target="_blank" rel="noopener">seL4/l4v</a> 的 <a href="https://github.com/seL4/l4v/blob/master/lib/Monad_WP/NonDetMonad.thy" target="_blank" rel="noopener">NonDetMonad</a>。</p>
+<p>State_Monad:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">datatype (&#39;s, &#39;a) state &#x3D; State (run_state: &quot;&#39;s ⇒ (&#39;a × &#39;s)&quot;)</span><br><span class="line"></span><br><span class="line">qualified definition return :: &quot;&#39;a ⇒ (&#39;s, &#39;a) state&quot; where</span><br><span class="line">&quot;return a &#x3D; State (Pair a)&quot;</span><br><span class="line"></span><br><span class="line">qualified definition ap :: &quot;(&#39;s, &#39;a ⇒ &#39;b) state ⇒ (&#39;s, &#39;a) state ⇒ (&#39;s, &#39;b) state&quot; where</span><br><span class="line">&quot;ap f x &#x3D; State (λs. case run_state f s of (g, s&#39;) ⇒ case run_state x s&#39; of (y, s&#39;&#39;) ⇒ (g y, s&#39;&#39;))&quot;</span><br><span class="line"></span><br><span class="line">qualified definition bind :: &quot;(&#39;s, &#39;a) state ⇒ (&#39;a ⇒ (&#39;s, &#39;b) state) ⇒ (&#39;s, &#39;b) state&quot; where</span><br><span class="line">&quot;bind x f &#x3D; State (λs. case run_state x s of (a, s&#39;) ⇒ run_state (f a) s&#39;)&quot;</span><br><span class="line"></span><br><span class="line">lemma run_state_return[simp]: &quot;run_state (return x) s &#x3D; (x, s)&quot;</span><br><span class="line">unfolding return_def</span><br><span class="line">by simp</span><br><span class="line"></span><br><span class="line">adhoc_overloading Monad_Syntax.bind bind</span><br><span class="line"></span><br><span class="line">lemma bind_left_identity[simp]: &quot;bind (return a) f &#x3D; f a&quot;</span><br><span class="line">unfolding return_def bind_def by simp</span><br><span class="line"></span><br><span class="line">lemma bind_right_identity[simp]: &quot;bind m return &#x3D; m&quot;</span><br><span class="line">unfolding return_def bind_def by simp</span><br><span class="line"></span><br><span class="line">lemma bind_assoc[simp]: &quot;bind (bind m f) g &#x3D; bind m (λx. bind (f x) g)&quot;</span><br><span class="line">unfolding bind_def by (auto split: prod.splits)</span><br></pre></td></tr></table></figure></p>
+<p>NonDetMonad<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type_synonym (&#39;s,&#39;a) nondet_monad &#x3D; &quot;&#39;s \&lt;Rightarrow&gt; (&#39;a \&lt;times&gt; &#39;s) set \&lt;times&gt; bool&quot;</span><br></pre></td></tr></table></figure></p>
+<p>HOL 里的 <code>State Monad</code> 和 Haskell 里的是同一个东西，<strong>l4v</strong> 里的 <code>NonDetMonad</code> 把 $’s \rightarrow (‘s, ‘a)$ 换成了 $’s \rightarrow (‘s, ‘ a) set \times bool$ 。其实 <code>NonDetMonad</code> 描述了非确定性，一个状态执行之后包含一系列结果和后续状态以及一个 bool Flag，这个 Flag 指示后续路径里是否存在执行失败的可能。贴一段注释：</p>
+<blockquote>
+<p>text {<em><br> The basic type of the nondeterministic state monad with failure is<br> very similar to the normal state monad. Instead of a pair consisting<br> of result and new state, we return a set of these pairs coupled with<br> a failure flag. Each element in the set is a potential result of the<br> computation. The flag is @{const True} if there is an execution path<br> in the computation that may have failed. Conversely, if the flag is<br> @{const False}, none of the computations resulting in the returned<br> set can have failed.  </em>}</p>
+</blockquote>
+<p>以上，先说到这里</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2018/09/12/state-monad/">https://blog.runc.dev/2018/09/12/state-monad/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a>
+            <a href="/tags/%E5%BD%A2%E5%BC%8F%E5%8C%96/">形式化</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2018/10/06/py-source/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">cpython 源码概览</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2018/05/22/tlsf/">
+        <span class="next-text nav-default">TLSF 动态内存分配算法</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="D（bei）P（bao）专题报告"/><meta name="keywords" content="算法, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2016/07/11/dp-report/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>D（bei）P（bao）专题报告 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">D（bei）P（bao）专题报告
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-07-11
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#01背包"><span class="toc-text">01背包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POJ-2923-Relocation"><span class="toc-text">POJ 2923 Relocation</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】"><span class="toc-text">【Sample Input】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Output】"><span class="toc-text">【Sample Output】</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HDU-3466-Proud-Merchants"><span class="toc-text">HDU 3466 Proud Merchants</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】-1"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】-1"><span class="toc-text">【Sample Input】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Output】-1"><span class="toc-text">【Sample Output】</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HDU-4281-Judges’-response"><span class="toc-text">HDU 4281 Judges’ response</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完全背包"><span class="toc-text">完全背包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多重背包"><span class="toc-text">多重背包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POJ-1742-Coins"><span class="toc-text">POJ 1742 Coins</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】-2"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】-2"><span class="toc-text">【Sample Input】</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#混合背包"><span class="toc-text">混合背包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POJ-3260-The-Fewest-Coins"><span class="toc-text">POJ 3260 The Fewest Coins</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】-3"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】-3"><span class="toc-text">【Sample Input】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Output】-2"><span class="toc-text">【Sample Output】</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分组背包"><span class="toc-text">分组背包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖背包"><span class="toc-text">依赖背包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#更一般的问题：树形依赖"><span class="toc-text">更一般的问题：树形依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#泛化背包"><span class="toc-text">泛化背包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NOIP2006-金明的预算方案"><span class="toc-text">NOIP2006 金明的预算方案</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】-4"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】-4"><span class="toc-text">【Sample Input】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Output】-3"><span class="toc-text">【Sample Output】</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NCPC2014-Outing"><span class="toc-text">NCPC2014 Outing</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#【Description】-5"><span class="toc-text">【Description】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Input】-5"><span class="toc-text">【Sample Input】</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#【Sample-Output】-4"><span class="toc-text">【Sample Output】</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ENDS"><span class="toc-text">ENDS</span></a>
+    </div>
+  </div><div class="post-content"><p>注: 暑假集训和学妹安排在一起作报告, 于是被一个OI选手带上DP不归路.</p>
+<center>​ShengRang  &&  Thea.R</center>
+
+<!-- [TOC] -->
+<h2 id="01背包"><a href="#01背包" class="headerlink" title="01背包"></a>01背包</h2><p>模型：每个物品体积为vi，价值为wi，选择任意件物品放入容量为m的背包内，求可以取得的最大价值</p>
+<p>方程：f[i][j]表示i个物品放入容量为j的背包所能取得的最大价值</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　f[i][j]=<span class="built_in">max</span>(f[i<span class="number">-1</span>][j], f[i<span class="number">-1</span>][j-v[i]]+w[i])</span><br></pre></td></tr></table></figure>
+<p>空间优化：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> j=m; j&gt;=v[i]; j—)  <span class="comment">//从大到小转移</span></span><br><span class="line">	　f[j]=<span class="built_in">max</span>(f[j], f[j-v[i]]+w[i]);</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h4 id="POJ-2923-Relocation"><a href="#POJ-2923-Relocation" class="headerlink" title="POJ 2923 Relocation"></a>POJ 2923 Relocation</h4><p><a href="http://poj.org/problem?id=2923" target="_blank" rel="noopener">http://poj.org/problem?id=2923</a></p>
+<blockquote>
+<h5 id="【Description】"><a href="#【Description】" class="headerlink" title="【Description】"></a>【Description】</h5><p>给定n(&lt;=10)个物品, 重量w[i] (&lt;=100).<br>有两辆车, 容量为C1, C2(&lt;=100). 每次两辆车一起运输一些家具.每辆车运的家具重量和不大于容量.<br>求运完所有家具至少要几次运送.</p>
+<h5 id="【Sample-Input】"><a href="#【Sample-Input】" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>2<br>6 12 13                &emsp;&emsp;&emsp;&emsp;&emsp;        # 6个物品, C1=12, C2=13<br>3 9 13 3 10 11        &emsp;&emsp;&emsp;&emsp;&emsp;        # 重量<br>7 1 100                &emsp;&emsp;&emsp;&emsp;&emsp;        # 7个物品, C1=1, C2=100<br>1 2 33 50 50 67 98</p>
+<h5 id="【Sample-Output】"><a href="#【Sample-Output】" class="headerlink" title="【Sample Output】"></a>【Sample Output】</h5><p>Scenario #1:<br>2                        &emsp;&emsp;&emsp;&emsp;&emsp;    # (9+3, 13), (11, 10+3)<br>Scenario #2:<br>3</p>
+</blockquote>
+<p>n比较小可以状压.<br>先对所有状态判断, 这些家具是否可以由两辆车一次运送到目的地, 所有合法状态记录在一个数组state[]里.<br>对这些状态背包, dp[ i ][ j ] 表示使用前i个合法状态, 状态 j 需要的最少运送次数. 如果状态 j 和状态 state[i] 没有冲突(同一个家具只需要运送一次). 则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[ i ][ j | state[i] ] &#x3D; min(dp[ i ][ j | state[i]] , dp[ i-1 ][ j ] + 1 )</span><br></pre></td></tr></table></figure>
+<p>最后答案就是dp[ .. ][ (1&lt;&lt;n )-1 ] . 第一维可以省略掉.</p>
+<h4 id="HDU-3466-Proud-Merchants"><a href="#HDU-3466-Proud-Merchants" class="headerlink" title="HDU 3466 Proud Merchants"></a>HDU 3466 Proud Merchants</h4><p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=3466" target="_blank" rel="noopener">http://acm.hdu.edu.cn/showproblem.php?pid=3466</a></p>
+<blockquote>
+<h5 id="【Description】-1"><a href="#【Description】-1" class="headerlink" title="【Description】"></a>【Description】</h5><p>每个商品价格p, 至少有q元才能购买, 价值v. 求最大价值</p>
+<p>n个物品, 1&lt;=n&lt;=500, 初始有m元, 1&lt;=m&lt;=5000. 1&lt;=p&lt;=q&lt;=100, 1&lt;=v&lt;=1000</p>
+<h5 id="【Sample-Input】-1"><a href="#【Sample-Input】-1" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>2 10                    &emsp;&emsp;&emsp;&emsp;&emsp;    # 2个物品, 10元钱<br>10 15 10                        &emsp;&emsp;&emsp;&emsp;&emsp;# (p1, q1, v1)<br>5 10 5                        &emsp;&emsp;&emsp;&emsp;&emsp;# (p2, q2, v2)<br>3 10                        &emsp;&emsp;&emsp;&emsp;&emsp;# 3个物品, 10元钱<br>5 10 5                        &emsp;&emsp;&emsp;&emsp;&emsp;# p1, q1, v1<br>3 5 6                        &emsp;&emsp;&emsp;&emsp;&emsp;# p2, q2, v2<br>2 7 3                    &emsp;&emsp;&emsp;&emsp;&emsp;    # p3, q3, v3</p>
+<h5 id="【Sample-Output】-1"><a href="#【Sample-Output】-1" class="headerlink" title="【Sample Output】"></a>【Sample Output】</h5><p>5                        &emsp;&emsp;&emsp;&emsp;&emsp;    # 只能买第二个物品<br>11                     &emsp;&emsp;&emsp;&emsp;&emsp;        # 先买第一个物品, 再买第二个物品</p>
+</blockquote>
+<p>考虑2个商品A (p1, q1), B(p2, q2).假设单独购买A, 单独购买B, 都可以买下.<br>此时如果要购买A和B, 购买顺序对钱的需求不同.如果先买A再买B ,则需要有p1+q2的钱. 先买B再买A, 则需要有p2+q1的钱.<br>当然是对钱的需求越小, 越优. 如果先买A更优. 则p1+q2 &lt; p2+q1. 即q1-p1 &gt; q2-p2. 因此qi - pi越大的物品, 越先购买约好. 所以对 qi-pi 从小到大排序. 然后01背包即可.</p>
+<h4 id="HDU-4281-Judges’-response"><a href="#HDU-4281-Judges’-response" class="headerlink" title="HDU 4281 Judges’ response"></a>HDU 4281 Judges’ response</h4><p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=4281" target="_blank" rel="noopener">http://acm.hdu.edu.cn/showproblem.php?pid=4281</a></p>
+<blockquote>
+<p>【Description】</p>
+<p>每位选手坐标为（xi，yi），所需要占用的时间为vi，现在共有n个选手，每个裁判最多贡献m个单位的时间解决问题，<br>1）求最少需要派出多少教练；<br>2）若教练数量足够多，解决完所有问题并返回起点（第一个选手所在位置），求最短路径和。<br>（2&lt;=n&lt;=16，0&lt;=m&lt;=100000，0&lt;=vi&lt;=1000，0&lt;=xi,yi&lt;=1000）</p>
+<p>【Sample Input】<br>3 3                     &emsp;&emsp;&emsp;&emsp;&emsp;    # 3个选手 每个教练的时间为3<br>0 0                        &emsp;&emsp;&emsp;&emsp;&emsp;    # 选手1坐标<br>0 3<br>0 1<br>0                            &emsp;&emsp;&emsp;&emsp;&emsp;# 选手1需要占用的时间<br>1<br>2                    </p>
+<p>3 1<br>0 0<br>0 3<br>0 1<br>0<br>1<br>2</p>
+<p>【Sample Output】<br>1 6                            &emsp;&emsp;&emsp;&emsp;&emsp;# 只需一个教练 最短距离为6<br>-1 -1                        &emsp;&emsp;&emsp;&emsp;&emsp;# 不能满足条件</p>
+</blockquote>
+<p>1、普通01背包<br>2、TSP问题：旅行商问题，即TSP问题（Travelling Salesman Problem），又译为旅行推销员问题、货郎担问题，是数学领域中著名问题之一。假设有一个旅行商人要拜访n个城市，他必须选择所要走的路径，路径的限制是每个城市只能拜访一次，而且最后要回到原来出发的城市。路径的选择目标是要求得的路径路程为所有路径之中的最小值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）TSP问题：f[i][s]=<span class="built_in">min</span>(f[i][s], f[j][s’]+dis[j][i]);  <span class="comment">//当前在i 状态为s经过的最小距离</span></span><br><span class="line">		   g[s]=<span class="built_in">min</span>(g[s], f[i][s]+dis[i][<span class="number">0</span>]);  <span class="comment">//当前状态为s 再返回原点的最小距离</span></span><br><span class="line"><span class="number">2</span>）MTSP问题：g[s]=<span class="built_in">min</span>(g[s], g[a|<span class="number">1</span>]+g[b|<span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
+<h2 id="完全背包"><a href="#完全背包" class="headerlink" title="完全背包"></a>完全背包</h2><p>模型：01背包的基础上，每件物品可以选择无限件</p>
+<p>方程：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　f[i][j]=<span class="built_in">max</span>(f[i<span class="number">-1</span>][j-k*v[i]]+k*w[i]); <span class="comment">// 0 &lt;= k &lt;= j/v[i]</span></span><br></pre></td></tr></table></figure>
+<p>优化：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> j=v[i]; j&lt;=m; j++)  <span class="comment">//从小到大转移</span></span><br><span class="line">	　f[j]=<span class="built_in">max</span>(f[j], f[j-v[i]]+w[i]);</span><br></pre></td></tr></table></figure>
+<h2 id="多重背包"><a href="#多重背包" class="headerlink" title="多重背包"></a>多重背包</h2><p>模型：01背包的基础上，每件物品可以选择c[i]件</p>
+<p>方程：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　f[i][j]=<span class="built_in">max</span>(f[i<span class="number">-1</span>][j-k*v[i]]+k*w[i]); <span class="comment">// 0 &lt;= k &lt;= min(c[i], j/v[i])</span></span><br></pre></td></tr></table></figure>
+<p>优化：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、二进制拆分</span><br><span class="line">	对于每一种物品，拆分为<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, .. , <span class="number">2</span>^k, c[i]<span class="number">-2</span>^k个，体积与价值乘上对应系数，做<span class="number">01</span>背包。</span><br><span class="line"><span class="number">2</span>、单调队列优化</span><br><span class="line">	f[j]=f[j-k*v[i]]+k*w[i];</span><br><span class="line">	令</span><br></pre></td></tr></table></figure>
+<h4 id="POJ-1742-Coins"><a href="#POJ-1742-Coins" class="headerlink" title="POJ 1742 Coins"></a>POJ 1742 Coins</h4><p><a href="http://poj.org/problem?id=1742" target="_blank" rel="noopener">http://poj.org/problem?id=1742</a></p>
+<blockquote>
+<h5 id="【Description】-2"><a href="#【Description】-2" class="headerlink" title="【Description】"></a>【Description】</h5><p>n种硬币，面值分别为v[i]，数量分别为c[i]，若分别购买价格为1，2，3，…，m－1，m的商品，有几种情况能成功购买。<br>（1&lt;=n&lt;=100，1&lt;=m&lt;=100000，1&lt;=vi&lt;=100000，0&lt;=ci&lt;=1000）</p>
+<h5 id="【Sample-Input】-2"><a href="#【Sample-Input】-2" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>3 10                        #n种硬币，商品价格为1，2，3，…，9，10<br>1 2 4 2 1 1                    #硬币面值分别为1，2，4，数量分别为2，1，1<br>2 5<br>1 4 2 1<br>0 0</p>
+<p>【Sample Output】</p>
+<p>8                            #能成功购买的为：1，2，3，4，5，6，7，8<br>4</p>
+</blockquote>
+<p>1）单调队列优化</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">100</span>+<span class="number">10</span>, maxm=<span class="number">100000</span>+<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m, v[maxn], c[maxn], f[maxm];</span><br><span class="line"><span class="keyword">int</span> fir, tail, q[maxm], p[maxm];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Zero</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=m; j&gt;=v[i]; j--)  f[j]=<span class="built_in">max</span>(f[j], f[j-v[i]]+v[i]);</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Com</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=v[i]; j&lt;=m; j++)  f[j]=<span class="built_in">max</span>(f[j], f[j-v[i]]+v[i]);</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Multi</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;v[i]; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        fir=tail=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k=j, h=<span class="number">0</span>; k&lt;=m; k+=v[i], h++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span>(fir!=tail&amp;&amp;k-p[fir]&gt;v[i]*c[i])    ++fir;</span><br><span class="line">            <span class="keyword">int</span> tmp=f[k]-h*v[i];</span><br><span class="line">            <span class="keyword">while</span>(fir!=tail&amp;&amp;q[tail<span class="number">-1</span>]&lt;tmp)   --tail;</span><br><span class="line">            q[tail++]=tmp, p[tail]=k;</span><br><span class="line">            f[k]=q[fir]+h*v[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;n, &amp;m)!=EOF)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memset</span>(f, <span class="number">0</span>, <span class="keyword">sizeof</span> f);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++) <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++) <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;c[i]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(c[i]==<span class="number">1</span>) Zero(i);</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(c[i]*v[i]&gt;=m) Com(i);</span><br><span class="line">            <span class="keyword">else</span> Multi(i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=m; i++) ans+=(f[i]==i);</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;ans&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2）完全背包思想</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">100</span>+<span class="number">10</span>, maxm=<span class="number">100000</span>+<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m, a[maxn], c[maxn], g[maxm];</span><br><span class="line"><span class="keyword">bool</span> f[maxm];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;n, &amp;m)!=EOF&amp;&amp;n+m)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++) <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;a[i]);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++) <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;c[i]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">memset</span>(f, <span class="number">0</span>, <span class="keyword">sizeof</span> f);</span><br><span class="line">        f[<span class="number">0</span>]=<span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">memset</span>(g, <span class="number">0</span>, <span class="keyword">sizeof</span> g);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=a[i]; j&lt;=m; j++)</span><br><span class="line">                <span class="keyword">if</span>((!f[j])&amp;&amp;(f[j-a[i]])&amp;&amp;g[j-a[i]]&lt;c[i])</span><br><span class="line">                &#123;</span><br><span class="line">                    f[j]=<span class="literal">true</span>;</span><br><span class="line">                    g[j]=g[j-a[i]]+<span class="number">1</span>;</span><br><span class="line">                    ++ans;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;ans&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="混合背包"><a href="#混合背包" class="headerlink" title="混合背包"></a>混合背包</h2><h4 id="POJ-3260-The-Fewest-Coins"><a href="#POJ-3260-The-Fewest-Coins" class="headerlink" title="POJ 3260 The Fewest Coins"></a>POJ 3260 The Fewest Coins</h4><p><a href="http://poj.org/problem?id=3260" target="_blank" rel="noopener">http://poj.org/problem?id=3260</a></p>
+<blockquote>
+<h5 id="【Description】-3"><a href="#【Description】-3" class="headerlink" title="【Description】"></a>【Description】</h5><p>n种硬币，面值分别为v[i]，数量分别为c[i]，各种面值的硬币商店都拥有无限多，现在买价格为m的商品，求交易中所需流通硬币的最小数目。<br>（1&lt;=n&lt;=100，1&lt;=m&lt;=10000，1&lt;=vi&lt;=120，0&lt;=ci&lt;=10000）</p>
+<h5 id="【Sample-Input】-3"><a href="#【Sample-Input】-3" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>3 70                        # 3种硬币 商品价格70<br>5 25 50                        # 硬币面值分别为5 25 50<br>5 2 1                        # 5<em>5，25</em>2，50*1</p>
+<h5 id="【Sample-Output】-2"><a href="#【Sample-Output】-2" class="headerlink" title="【Sample Output】"></a>【Sample Output】</h5><p>3                            # 给商家25+50，补回5，所流通的硬币数目为3</p>
+</blockquote>
+<p>将商店找补的硬币数目视为负数做完全背包，购买者拥有的硬币做多重背包<br>tips：背包中价值为负数时如何处理（POJ2184）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">100</span>+<span class="number">10</span>, maxm=<span class="number">20000</span>+<span class="number">10</span>, p=<span class="number">20000</span>, INF=<span class="number">0x7f7f7f7f</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m, v[maxn], v1[maxn], c[maxn], f[maxm];</span><br><span class="line"><span class="keyword">int</span> N, v2[maxm], w[maxm];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;n, &amp;m)!=EOF)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</span><br><span class="line">            v1[i]=-v[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++) <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;c[i]);</span><br><span class="line"></span><br><span class="line">        N=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> sum=<span class="number">0</span>, tmp=<span class="number">1</span>; sum&lt;=c[i]; tmp&lt;&lt;=<span class="number">1</span>)</span><br><span class="line">                <span class="keyword">if</span>(sum+tmp&lt;c[i]) v2[++N]=tmp*v[i], w[N]=tmp, sum+=tmp;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    v2[++N]=(c[i]-sum)*v[i], w[N]=(c[i]-sum);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">memset</span>(f, <span class="number">0x7f</span>, <span class="keyword">sizeof</span> f);</span><br><span class="line">        f[<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=N; i++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=p; j&gt;=v2[i]; j--)</span><br><span class="line">                <span class="keyword">if</span>(f[j-v2[i]]!=INF) f[j]=<span class="built_in">min</span>(f[j], f[j-v2[i]]+w[i]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=p+v1[i]; j&gt;=<span class="number">0</span>; j--)</span><br><span class="line">                <span class="keyword">if</span>(f[j-v1[i]]!=INF) f[j]=<span class="built_in">min</span>(f[j], f[j-v1[i]]+<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(f[m]!=INF) <span class="built_in">cout</span>&lt;&lt;f[m]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">cout</span>&lt;&lt;<span class="number">-1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="分组背包"><a href="#分组背包" class="headerlink" title="分组背包"></a>分组背包</h2><p>分组背包就是有很多物品分属不同的物品组，每个物品组中只能选一个。<br>分组背包的公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F[k,v]&#x3D;max(F[k−1,v],F[k−1,v−Ci]+Wi  [ item i∈group k ])</span><br></pre></td></tr></table></figure>
+<p>伪代码<br>for k ← 1 to K<br>  for v ← V to 0            # 这重循环一定要在 foreach item的外面..<br>    for all item i in group k<br>      F [v] ← max{F [v], F [v − Ci ] + Wi }</p>
+<h2 id="依赖背包"><a href="#依赖背包" class="headerlink" title="依赖背包"></a>依赖背包</h2><p>​    这是《背包九讲》中的一讲，是从一道非树形的依赖背包讲起的，是说一些物品依赖于一个物品，但这些依赖的物品下面没有了依赖的物品。那么我们就可以将其化为分组背包去做。</p>
+<p>​    依赖背包的思想就是把主件的空间空出来，对附件做0-1背包，然后就能得到一系列的得到费用依次为0…V−Ck所有这些值时相应的最大价值Fk[0…V−Ck]Fk[0…V−Ck](其中Ck是主件的费用),那么我们就将附件与主件变成了V-Ck+1个物品的物品组.显然这些费用都是互斥的，你只能选择一个费用对吧。这是很好理解的，这个物品组其实就变成了一个泛化物品。</p>
+<p>​    对于主件与附件化为的这个物品组，我们得到费用为v的物品的价值就是 F[v−Ck]+WkF[v−Ck]+Wk 。对于众多的主件与附件化为的物品组，我们套分组背包的公式做就可以了。</p>
+<h3 id="更一般的问题：树形依赖"><a href="#更一般的问题：树形依赖" class="headerlink" title="更一般的问题：树形依赖"></a>更一般的问题：树形依赖</h3><p>​    这时我们就不能将一个主件下面的附件单一的做0-1背包了，因为附件下面还有附件。例如主件下有附件1，附件2，然后附件1下面有个附件组a，附件2下面有个附件组b，那我们就可以将附件组a做0-1背包搞一个物品组，附件组b做0-1背包搞一个物品组，那么我们的主件下面就有了两个物品组。</p>
+<p>​    这时候我们需要做的便是对两个物品组做分组背包，这时候这个主件就被搞成了一个物品组。众多主件搞成了众多的物品组。最后在进行分组背包。最底层是0-1背包，往上走就变成了分组背包。这个过程可以通过dfs实现,复杂度 O(n∗c2)O(n∗c2)。</p>
+<h3 id="泛化背包"><a href="#泛化背包" class="headerlink" title="泛化背包"></a>泛化背包</h3><p>​    在背包容量为 V 的背包问题中,泛化物品是一个定义域为 0 . . . V中的整数的函数 h,当分配给它的费用为 v 时,能得到的价值就是 h(v)。这个定义有一点点抽象,另一种理解是一个泛化物品就是一个数组 h[0 . . . V ],给它费用 v ,可得到价值 h[v]。</p>
+<p>​    把两个泛化物品合并成一个泛化物品的运算,就是枚举体积分配给两个泛化物<br>品,满足: G[j]=max(G1[j−k]+G2[k])(C&gt;=j&gt;=k&gt;=0). 把两个泛化物品合并的时间复杂度是 O(C^2) 。</p>
+<p>​    把每个物品为根的子树视为一个泛化物品. 每个子树的泛化物品求解就相当于合并这个子树的根的叶子节点的每个泛化物品.</p>
+<p>​    泛化物品的并:因为两个泛化物品之间存在交集,所以不能同时两者都取,那么我们就需要求泛化物品的并,对同一体积,我们需要选取两者中价值较大的一者,效率 O(C)。G[j]=max(G1[j],G2[j])(C&gt;=j&gt;=0)</p>
+<h4 id="NOIP2006-金明的预算方案"><a href="#NOIP2006-金明的预算方案" class="headerlink" title="NOIP2006 金明的预算方案"></a>NOIP2006 金明的预算方案</h4><p><a href="https://www.rqnoj.cn/problem/6" target="_blank" rel="noopener">https://www.rqnoj.cn/problem/6</a></p>
+<blockquote>
+<h5 id="【Description】-4"><a href="#【Description】-4" class="headerlink" title="【Description】"></a>【Description】</h5><p>　　金明今天很开心，家里购置的新房就要领钥匙了，新房里有一间金明自己专用的很宽敞的房间。更让他高兴的是，妈妈昨天对他说：“你的房间需要购买哪些物品，怎么布置，你说了算，只要不超过N元钱就行”。今天一早，金明就开始做预算了，他把想买的物品分为两类：主件与附件，附件是从属于某个主件的，下表就是一些主件与附件的例子：<br>​        主件 附件<br>​        电脑 打印机，扫描仪<br>​        书柜 图书<br>​        书桌 台灯，文具<br>​        工作椅 无<br>　　如果要买归类为附件的物品，必须先买该附件所属的主件。每个主件可以有0个、1个或2个附件。附件不再有从属于自己的附件。金明想买的东西很多，肯定会超过妈妈限定的N元。于是，他把每件物品规定了一个重要度，分为5等：用整数1~5表示，第5等最重要。他还从因特网上查到了每件物品的价格（都是10元的整数倍）。他希望在不超过N元（可以等于N元）的前提下，使每件物品的价格与重要度的乘积的总和最大。<br>　　设第j件物品的价格为v[j]，重要度为w[j]，共选中了k件物品，编号依次为j1，j2，……，jk，则所求的总和为：v[j1]<em>w[j1]+v[j2]</em>w[j2]+ …+v[jk]<em>w[jk]。（其中</em>为乘号）请你帮助金明设计一个满足要求的购物单。</p>
+<h5 id="【Sample-Input】-4"><a href="#【Sample-Input】-4" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>1000 5<br>800 2 0<br>400 5 1<br>300 5 1<br>400 3 0<br>500 2 0</p>
+<h5 id="【Sample-Output】-3"><a href="#【Sample-Output】-3" class="headerlink" title="【Sample Output】"></a>【Sample Output】</h5><p>2200</p>
+</blockquote>
+<h4 id="NCPC2014-Outing"><a href="#NCPC2014-Outing" class="headerlink" title="NCPC2014 Outing"></a>NCPC2014 Outing</h4><p><a href="http://acm.csu.edu.cn/OnlineJudge/problem.php?id=1580" target="_blank" rel="noopener">http://acm.csu.edu.cn/OnlineJudge/problem.php?id=1580</a></p>
+<blockquote>
+<h5 id="【Description】-5"><a href="#【Description】-5" class="headerlink" title="【Description】"></a>【Description】</h5><p>有一辆能载客m的车，有n个人，然后第i个人上车的条件是第a[i]个人要上车，问最多能上几个</p>
+<h5 id="【Sample-Input】-5"><a href="#【Sample-Input】-5" class="headerlink" title="【Sample Input】"></a>【Sample Input】</h5><p>4 4<br>1 2 3 4</p>
+<h5 id="【Sample-Output】-4"><a href="#【Sample-Output】-4" class="headerlink" title="【Sample Output】"></a>【Sample Output】</h5><p>4</p>
+</blockquote>
+<h1 id="ENDS"><a href="#ENDS" class="headerlink" title="ENDS"></a>ENDS</h1><p>集训第9天，have fun：）</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2016/07/11/dp-report/">https://blog.runc.dev/2016/07/11/dp-report/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/08/10/python-coroutine/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Python中的generator和coroutine</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2016/04/29/sam/">
+        <span class="next-text nav-default">后缀自动机入门</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

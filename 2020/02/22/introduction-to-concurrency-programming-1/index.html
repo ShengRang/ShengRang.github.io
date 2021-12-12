@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="">
+  <head><meta charset="UTF-8"/>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="并发编程基础 - 重排序和屏障"/><meta name="keywords" content="并发编程, 乌云制作法" /><link rel="alternate" href="/atom.xml" title="乌云制作法"><link rel="shortcut icon" type="image/x-icon" href="/images/lucid5.jpg?v=2.11.1" />
+<link rel="canonical" href="https://blog.runc.dev/2020/02/22/introduction-to-concurrency-programming-1/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.1" />
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>并发编程基础 - 重排序和屏障 - 乌云制作法</title>
+  <meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="mobile-header-logo">
+    <a href="/." class="logo">乌云制作法</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">乌云制作法</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">并发编程基础 - 重排序和屏障
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-02-22
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#编译期指令重排"><span class="toc-text">编译期指令重排</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译器屏障"><span class="toc-text">编译器屏障</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理器指令重排和内存屏障"><span class="toc-text">处理器指令重排和内存屏障</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后"><span class="toc-text">最后</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>本篇介绍指令重排序，optimization barrier 和 memory barrier。</p>
+<a id="more"></a>
+<p><strong>Correct me if I’m wrong.</strong></p>
+<p><img src="/images/gezi.jpg" alt=""></p>
+<p>现代处理器通常并行地执行若干条指令，且可能重新安排内存访问顺序，这种重新排序可以极大地加速程序的执行。编译器也是出于性能优化的目的，可能会修改内存指令的顺序。所以不要认为指令会严格按照它们在源码里出现的顺序执行。在并发编程的时候，为了处理同步，就必须避免指令重排序。显然如果同步原语之后的一条指令在同步原语之前执行，就是很严重的错误（比如 <code>mutex.lock</code> 之后要进入临界区，如果临界区里的指令被重排到了 <code>mutex.lock</code> 的前面是不可接受的）。正确实现的同步原语肯定得通过编译器屏障和内存屏障确保指令重排不影响正确性。</p>
+<h3 id="编译期指令重排"><a href="#编译期指令重排" class="headerlink" title="编译期指令重排"></a>编译期指令重排</h3><p>在单线程执行的代码里，代码执行的 <strong>效果</strong> 当然是按照代码顺序依次执行。现代编译器为了优化性能，可能会把一些指令重排，这种效应在代码单线程执行时是无法察觉的（如果察觉到就说明这样的优化过于激进，产生错误的结果）。指令未必会严格按照它们在源代码中出现的顺序。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> Value;</span><br><span class="line"><span class="keyword">int</span> IsPublished = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sendValue</span><span class="params">(<span class="keyword">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Value = x;</span><br><span class="line">    IsPublished = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">readValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (!IsPublished) &#123;&#125;</span><br><span class="line">    <span class="keyword">return</span> Value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>比如这段代码，<code>Value = x;</code> 和 <code>IsPublished = 1;</code> 在单线程运行时，谁先执行并不影响正确性，编译器可能会把 <code>IsPublished = 1;</code> 的汇编代码生成在 <code>Value = x;</code> 的前面。单线程执行时，即使发生了这样的重排，在两个语句的中间也没有检查每个变量的值（比如 <code>print Value</code>），因此这两句话重排并不影响正确性。</p>
+<p>然而在 <em>lock-free</em> 编程的时候，这样的代码可能会由于编译器重排产生错误。假设线程 A 执行 <code>sendValue</code>，线程 B 执行 <code>readValue</code>。线程 A 先对 <code>Value</code> 发布一个值 <code>x</code>，然后标记 <code>IsPublished</code>。线程 B 不断检查 <code>IsPublished</code>，看是否已经有线程发布了值，如果有线程发布了值，那么返回 <code>Value</code> 的值。如果编译器在编译 <code>sendValue</code> 的时候把两个指令重排，线程 B 就可能看到了 <code>IsPublished == 1</code>，然而 <code>Value</code> 并没有被正确赋值，返回一个错误的值。</p>
+<h3 id="编译器屏障"><a href="#编译器屏障" class="headerlink" title="编译器屏障"></a>编译器屏障</h3><p>编译器屏障，优化屏障，optimization barrier，compiler barrier，看意思就知道说的是一个东西了。<em>optimization barrier</em> 保证编译器不会混淆放在 barrier 之前的汇编指令和它之后的汇编指令。在 Linux kernel 里，优化屏障的代码就是 <code>barrier()</code> 宏，展开成 <code>asm volatile(&quot;&quot; ::: &quot;memory&quot;);</code>。指令 <code>asm</code> 告诉编译器要插入汇编代码(这里要插入的是空的汇编代码)。 <code>volatile</code> 关键字禁止编译器把 <code>asm</code> 指令和程序中的其他指令重新组合。 <code>memory</code> 关键字强制编译器假设内存中的所有内存单元已经被汇编语言指令修改。所以，编译器不能对 barrier 之前的语句存储在内存单元的值进行假设，不能使用存放在寄存器里的内存单元的值来优化代码。但是注意，优化屏障不保证 CPU 执行汇编指令的时候重排序，这种重排需要内存屏障禁止。</p>
+<h3 id="处理器指令重排和内存屏障"><a href="#处理器指令重排和内存屏障" class="headerlink" title="处理器指令重排和内存屏障"></a>处理器指令重排和内存屏障</h3><p>现代处理器架构越来越复杂啦，一般是多个核心，每个核心有自己的缓存，又有所有核心共用的缓存，之后才是内存（这是 SMP，还有 NUMA， 总之挺复杂的我也不是很懂，但是理解内存模型这方面知道个大概就行）。CPU寄存器, L1, L2, L3, …, memory，速度依次变慢，容量依次变大，也是计算机系统经典知识了。现代处理器通常并行地执行若干条指令，且可能重新安排内存访问顺序，这种重新排序可以极大地加速程序的执行。总之为了性能，CPU 是支持乱序执行的 (Out-of-Order, OOO)，学体系结构的时候应该都学过。现代处理器非常复杂，而且随着不断发展也越来越复杂，这里不打算细究到底怎么乱序执行，缓存一致性协议啥的。</p>
+<p>内存屏障 (memory barrier) 确保，在屏障之后的操作开始执行之前，屏障之前的操作已经完成。所以这个东西叫做屏障(barrier)，也有的地方叫栅栏(fence)，意思就是它前后的指令不能穿越这个 barrier。前面介绍的 optimization barrier 可以阻止编译器进行指令重排。对于处理器指令重排，相对会更加复杂，对于不同的指令重排，有不同的内存屏障。</p>
+<p>注意，这里说的内存屏障，和 JVM 里的 <code>write barriers</code> 没关系（JVM 里的写屏障就像是一个 callback 机制）。Memory barrier instructions directly control only the interaction of a CPU with its cache, with its write-buffer that holds stores waiting to be flushed to memory, and/or its buffer of waiting loads or speculatively executed instructions. These effects may lead to further interaction among caches, main memory and other processors.</p>
+<p>几乎所有的处理器都至少提供一种粗粒度的 barrier 指令，一般就只叫 <strong>Fence</strong>，可以确保 Fence 前的 Load 和 Store 严格地在 Fence 后的 Load 和 Store 前执行。无论是哪种处理器，这种一般 barrier 都是很耗时的(一般都接近甚至比原子操作指令更慢)。大多数处理器会另外提供一些细粒度的 barrier。下面是一种普遍的 barrier 分类，基本能比较好地映射到特定真实 CPU 里的指令：</p>
+<ol>
+<li>LoadLoad barrier<blockquote>
+<p>序列 <code>Load1; LoadLoad; Load2</code> 确保 Load1 比 Load2 以及之后的所有 Load 指令先执行。</p>
+</blockquote>
+</li>
+<li>StoreStore barrier<blockquote>
+<p>序列 <code>Store1; StoreStore; Store2</code> 确保 Store1 的写入可见于所有处理器(比如从缓存刷新到内存)，先发生于 Store2 的写入和所有之后的 Store 指令。</p>
+</blockquote>
+</li>
+<li>LoadStore barrier<blockquote>
+<p>序列 <code>Load1; LoadStore; Store2</code> 确保 Load1 读取数据先发生于 Store2 和之后的所有 Store 指令 写入的数据可见于所有处理器。</p>
+</blockquote>
+</li>
+<li>StoreLoad barrier<blockquote>
+<p>序列 <code>Store1; StoreLoad; Load2</code> 确保 Store1 写入的数据可见于所有处理器先发生于 Load2 和之后的所有 Load 指令的执行。</p>
+</blockquote>
+</li>
+</ol>
+<p>这几种是常见的指令重排情况和对应的 barrier。在特定的处理器上，并不是这四种重排序都有可能发生，有些处理器体系结构确保了有些重排序是不会发生的。参考下图。x86 上只会出现 StoreLoad 型重排序(个别 x86 不一样)，Alpha 架构(神威·太湖之光就是这个架构)就一切皆有可能了。跑个题，x86 虽然只有 StoreLoad 重排序，lfence 指令是有用的，近似于 NOP，但仍有其必要场景。具体参考 <a href="https://www.zhihu.com/question/29465982/answer/384041731" target="_blank" rel="noopener">https://www.zhihu.com/question/29465982/answer/384041731</a></p>
+<p><img src="memory_ordering_arch.png" alt=""></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本来想继续讲一些 <em>acquire-release</em> 语义，强弱内存模型啥的，还是放在后续的文章里讲解吧。</p>
+<p>参考资料:</p>
+<ol>
+<li><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></li>
+<li><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Memory_ordering" target="_blank" rel="noopener">Memory ordering</a></li>
+<li>Understanding the Linux Kernel</li>
+<li><a href="http://gee.cs.oswego.edu/dl/jmm/cookbook.html" target="_blank" rel="noopener">The JSR-133 Cookbook for Compiler Writers</a></li>
+</ol>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="https://blog.runc.dev">shengrang</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="https://blog.runc.dev/2020/02/22/introduction-to-concurrency-programming-1/">https://blog.runc.dev/2020/02/22/introduction-to-concurrency-programming-1/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2020/02/22/introduction-to-concurrency-programming-2/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">并发编程基础 - C++原子操作语义和内存模型</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2020/02/21/introduction-to-concurrency-programming-0/">
+        <span class="next-text nav-default">并发编程基础 - 并发对象和一致性模型</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="https://github.com/shengrang" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">shengrang</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.1"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
